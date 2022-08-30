@@ -11,6 +11,7 @@ gem "rubocop", "~> 1.7"
 
 gem 'kubik_styles_base', github: 'primate-inc/kubik_styles_base', branch: 'main'
 gem 'active_admin_kubik', git: 'https://github.com/primate-inc/active_admin_kubik_theme.git', branch: 'master'
+gem 'kubik_interface_elements', git: 'https://github.com/kubik-cms/kubik_interface_elements.git', branch: 'master'
 
 group :development do
   gem "devise"

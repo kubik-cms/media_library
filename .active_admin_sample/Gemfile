@@ -23,6 +23,7 @@ gem 'activeadmin'
 
 gem 'kubik_styles_base', github: 'primate-inc/kubik_styles_base', branch: 'main'
 gem 'active_admin_kubik', git: 'https://github.com/primate-inc/active_admin_kubik_theme.git', branch: 'master'
+gem 'kubik_interface_elements', git: 'https://github.com/kubik-cms/kubik_interface_elements.git', branch: 'master'
 gem 'kubik_media_library', path: '/kubik_media_library'
 
 gem 'hotwire-rails'

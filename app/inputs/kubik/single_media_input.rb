@@ -13,7 +13,6 @@ module Kubik
 
     def to_html
       input_wrapping do
-        modal_template_html <<
         empty_template_html <<
         image_template_html <<
         new_fields_template_html <<
@@ -28,10 +27,6 @@ module Kubik
 
     def modal_header
       "Select #{method.to_s.humanize.downcase}"
-    end
-
-    def modal_template_html
-      template.render 'admin/kubik_modal/template'
     end
 
     def method_prefix
