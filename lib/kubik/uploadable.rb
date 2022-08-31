@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+require 'kubik_image_present_validator'
 
 module Kubik
   # Uploadable module

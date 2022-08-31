@@ -89,7 +89,8 @@ module Kubik
             field_name_attribute,
             "${kubik_media_upload_id}",
             'data-image_selector-target': 'mediaUploadId',
-          )        )
+          )
+        )
       end
     end
 
