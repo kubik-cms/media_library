@@ -8,7 +8,6 @@ module KubikMediaLibrararyPageLayoutOverride
   def build(*args)
     ## Disable turbo drive globally
     set_attribute :'data-turbo', "false"
-    set_attribute :'data-controller', "kubik-modal"
     super
   end
 end

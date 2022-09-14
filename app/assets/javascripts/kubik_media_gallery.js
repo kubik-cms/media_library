@@ -535,12 +535,17 @@ var _multipleImageSelectorController = require("./controllers/multiple_image_sel
 var _multipleImageSelectorControllerDefault = parcelHelpers.interopDefault(_multipleImageSelectorController);
 var _imageDropzoneController = require("./controllers/image_dropzone_controller");
 var _imageDropzoneControllerDefault = parcelHelpers.interopDefault(_imageDropzoneController);
-window.Stimulus = _stimulus.Application.start();
-Stimulus.register("image_selector", _imageSelectorControllerDefault.default);
-Stimulus.register("multiple_image_selector", _multipleImageSelectorControllerDefault.default);
-Stimulus.register("image_dropzone", _imageDropzoneControllerDefault.default);
+var _kubikInterfaceElements = require("@kubik-cms/kubik_interface_elements");
+var _kubikInterfaceElementsDefault = parcelHelpers.interopDefault(_kubikInterfaceElements);
+var KubikInterfaceStimulus = _stimulus.Application.start();
+if (typeof KubikInterfaceStimulus != 'undefined') {
+    KubikInterfaceStimulus.register("image_selector", _imageSelectorControllerDefault.default);
+    KubikInterfaceStimulus.register("multiple_image_selector", _multipleImageSelectorControllerDefault.default);
+    KubikInterfaceStimulus.register("image_dropzone", _imageDropzoneControllerDefault.default);
+    KubikInterfaceStimulus.register("kubik-modal", _kubikInterfaceElementsDefault.default);
+}
 
-},{"@hotwired/stimulus":"hVNih","@hotwired/turbo":"lw7OH","./controllers/image_selector_controller":"8vNEg","./controllers/multiple_image_selector_controller":"c9uLa","./controllers/image_dropzone_controller":"7v4UP","@parcel/transformer-js/src/esmodule-helpers.js":"5oERU"}],"hVNih":[function(require,module,exports) {
+},{"@hotwired/stimulus":"hVNih","@hotwired/turbo":"lw7OH","./controllers/image_selector_controller":"8vNEg","./controllers/multiple_image_selector_controller":"c9uLa","./controllers/image_dropzone_controller":"7v4UP","@parcel/transformer-js/src/esmodule-helpers.js":"5oERU","@kubik-cms/kubik_interface_elements":"9LUix"}],"hVNih":[function(require,module,exports) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "Application", function() {
@@ -29739,6 +29744,546 @@ function isUnextendable(val) {
     return !val || typeof val != 'object' && typeof val != 'function';
 }
 
-},{"@parcel/transformer-js/src/esmodule-helpers.js":"5oERU"}]},["jURw3","5TWp2"], "5TWp2", "parcelRequired5d3")
+},{"@parcel/transformer-js/src/esmodule-helpers.js":"5oERU"}],"9LUix":[function(require,module,exports) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "default", function() {
+    return src_default;
+});
+var _helpers = require("@swc/helpers");
+function camelize(value) {
+    return value.replace(/(?:[_-])([a-z0-9])/g, function(_, char) {
+        return char.toUpperCase();
+    });
+}
+function capitalize(value) {
+    return value.charAt(0).toUpperCase() + value.slice(1);
+}
+function dasherize(value) {
+    return value.replace(/([A-Z])/g, function(_, char) {
+        return "-".concat(char.toLowerCase());
+    });
+}
+function readInheritableStaticArrayValues(constructor, propertyName) {
+    var ancestors = getAncestorsForConstructor(constructor);
+    return Array.from(ancestors.reduce(function(values, constructor2) {
+        getOwnStaticArrayValues(constructor2, propertyName).forEach(function(name) {
+            return values.add(name);
+        });
+        return values;
+    }, /* @__PURE__ */ new Set()));
+}
+function readInheritableStaticObjectPairs(constructor, propertyName) {
+    var ancestors = getAncestorsForConstructor(constructor);
+    return ancestors.reduce(function(pairs, constructor2) {
+        var _pairs;
+        (_pairs = pairs).push.apply(_pairs, _helpers.toConsumableArray(getOwnStaticObjectPairs(constructor2, propertyName)));
+        return pairs;
+    }, []);
+}
+function getAncestorsForConstructor(constructor) {
+    var ancestors = [];
+    while(constructor){
+        ancestors.push(constructor);
+        constructor = Object.getPrototypeOf(constructor);
+    }
+    return ancestors.reverse();
+}
+function getOwnStaticArrayValues(constructor, propertyName) {
+    var definition = constructor[propertyName];
+    return Array.isArray(definition) ? definition : [];
+}
+function getOwnStaticObjectPairs(constructor, propertyName) {
+    var definition = constructor[propertyName];
+    return definition ? Object.keys(definition).map(function(key) {
+        return [
+            key,
+            definition[key]
+        ];
+    }) : [];
+}
+(function _target() {
+    function extendWithReflect(constructor) {
+        function extended() {
+            return Reflect.construct(constructor, arguments, this instanceof extended ? this.constructor : void 0);
+        }
+        extended.prototype = Object.create(constructor.prototype, {
+            constructor: {
+                value: extended
+            }
+        });
+        Reflect.setPrototypeOf(extended, constructor);
+        return extended;
+    }
+    function testReflectExtension() {
+        var a = function a() {
+            this.a.call(this);
+        };
+        var b = extendWithReflect(a);
+        b.prototype.a = function() {};
+        return new b();
+    }
+    try {
+        testReflectExtension();
+        return extendWithReflect;
+    } catch (error) {
+        return function(constructor1) {
+            return /*#__PURE__*/ function(constructor) {
+                "use strict";
+                _helpers.inherits(extended, constructor);
+                var _super = _helpers.createSuper(extended);
+                function extended() {
+                    _helpers.classCallCheck(this, extended);
+                    return _super.apply(this, arguments);
+                }
+                return extended;
+            }(constructor1);
+        };
+    }
+})();
+function ClassPropertiesBlessing(constructor) {
+    var classes = readInheritableStaticArrayValues(constructor, "classes");
+    return classes.reduce(function(properties, classDefinition) {
+        return Object.assign(properties, propertiesForClassDefinition(classDefinition));
+    }, {});
+}
+function propertiesForClassDefinition(key) {
+    var _obj;
+    return _obj = {}, _helpers.defineProperty(_obj, "".concat(key, "Class"), {
+        get: function() {
+            var classes = this.classes;
+            if (classes.has(key)) return classes.get(key);
+            else {
+                var attribute = classes.getAttributeName(key);
+                throw new Error('Missing attribute "'.concat(attribute, '"'));
+            }
+        }
+    }), _helpers.defineProperty(_obj, "".concat(key, "Classes"), {
+        get: function() {
+            return this.classes.getAll(key);
+        }
+    }), _helpers.defineProperty(_obj, "has".concat(capitalize(key), "Class"), {
+        get: function() {
+            return this.classes.has(key);
+        }
+    }), _obj;
+}
+function TargetPropertiesBlessing(constructor) {
+    var targets = readInheritableStaticArrayValues(constructor, "targets");
+    return targets.reduce(function(properties, targetDefinition) {
+        return Object.assign(properties, propertiesForTargetDefinition(targetDefinition));
+    }, {});
+}
+function propertiesForTargetDefinition(name) {
+    var _obj;
+    return _obj = {}, _helpers.defineProperty(_obj, "".concat(name, "Target"), {
+        get: function() {
+            var target = this.targets.find(name);
+            if (target) return target;
+            else throw new Error('Missing target element "'.concat(name, '" for "').concat(this.identifier, '" controller'));
+        }
+    }), _helpers.defineProperty(_obj, "".concat(name, "Targets"), {
+        get: function() {
+            return this.targets.findAll(name);
+        }
+    }), _helpers.defineProperty(_obj, "has".concat(capitalize(name), "Target"), {
+        get: function() {
+            return this.targets.has(name);
+        }
+    }), _obj;
+}
+function ValuePropertiesBlessing(constructor) {
+    var valueDefinitionPairs = readInheritableStaticObjectPairs(constructor, "values");
+    var propertyDescriptorMap = {
+        valueDescriptorMap: {
+            get: function() {
+                var _this = this;
+                return valueDefinitionPairs.reduce(function(result, valueDefinitionPair) {
+                    var valueDescriptor = parseValueDefinitionPair(valueDefinitionPair, _this.identifier);
+                    var attributeName = _this.data.getAttributeNameForKey(valueDescriptor.key);
+                    return Object.assign(result, _helpers.defineProperty({}, attributeName, valueDescriptor));
+                }, {});
+            }
+        }
+    };
+    return valueDefinitionPairs.reduce(function(properties, valueDefinitionPair) {
+        return Object.assign(properties, propertiesForValueDefinitionPair(valueDefinitionPair));
+    }, propertyDescriptorMap);
+}
+function propertiesForValueDefinitionPair(valueDefinitionPair, controller) {
+    var definition = parseValueDefinitionPair(valueDefinitionPair, controller);
+    var key = definition.key, name = definition.name, read = definition.reader, write = definition.writer;
+    var _obj;
+    return _obj = {}, _helpers.defineProperty(_obj, name, {
+        get: function() {
+            var value = this.data.get(key);
+            if (value !== null) return read(value);
+            else return definition.defaultValue;
+        },
+        set: function(value) {
+            if (value === void 0) this.data.delete(key);
+            else this.data.set(key, write(value));
+        }
+    }), _helpers.defineProperty(_obj, "has".concat(capitalize(name)), {
+        get: function() {
+            return this.data.has(key) || definition.hasCustomDefaultValue;
+        }
+    }), _obj;
+}
+function parseValueDefinitionPair(param, controller) {
+    var _param = _helpers.slicedToArray(param, 2), token = _param[0], typeDefinition = _param[1];
+    return valueDescriptorForTokenAndTypeDefinition({
+        controller: controller,
+        token: token,
+        typeDefinition: typeDefinition
+    });
+}
+function parseValueTypeConstant(constant) {
+    switch(constant){
+        case Array:
+            return "array";
+        case Boolean:
+            return "boolean";
+        case Number:
+            return "number";
+        case Object:
+            return "object";
+        case String:
+            return "string";
+    }
+}
+function parseValueTypeDefault(defaultValue) {
+    switch(typeof defaultValue === "undefined" ? "undefined" : _helpers.typeOf(defaultValue)){
+        case "boolean":
+            return "boolean";
+        case "number":
+            return "number";
+        case "string":
+            return "string";
+    }
+    if (Array.isArray(defaultValue)) return "array";
+    if (Object.prototype.toString.call(defaultValue) === "[object Object]") return "object";
+}
+function parseValueTypeObject(payload) {
+    var typeFromObject = parseValueTypeConstant(payload.typeObject.type);
+    if (!typeFromObject) return;
+    var defaultValueType = parseValueTypeDefault(payload.typeObject.default);
+    if (typeFromObject !== defaultValueType) {
+        var propertyPath = payload.controller ? "".concat(payload.controller, ".").concat(payload.token) : payload.token;
+        throw new Error('The specified default value for the Stimulus Value "'.concat(propertyPath, '" must match the defined type "').concat(typeFromObject, '". The provided default value of "').concat(payload.typeObject.default, '" is of type "').concat(defaultValueType, '".'));
+    }
+    return typeFromObject;
+}
+function parseValueTypeDefinition(payload) {
+    var typeFromObject = parseValueTypeObject({
+        controller: payload.controller,
+        token: payload.token,
+        typeObject: payload.typeDefinition
+    });
+    var typeFromDefaultValue = parseValueTypeDefault(payload.typeDefinition);
+    var typeFromConstant = parseValueTypeConstant(payload.typeDefinition);
+    var type = typeFromObject || typeFromDefaultValue || typeFromConstant;
+    if (type) return type;
+    var propertyPath = payload.controller ? "".concat(payload.controller, ".").concat(payload.typeDefinition) : payload.token;
+    throw new Error('Unknown value type "'.concat(propertyPath, '" for "').concat(payload.token, '" value'));
+}
+function defaultValueForDefinition(typeDefinition) {
+    var constant = parseValueTypeConstant(typeDefinition);
+    if (constant) return defaultValuesByType[constant];
+    var defaultValue = typeDefinition.default;
+    if (defaultValue !== void 0) return defaultValue;
+    return typeDefinition;
+}
+function valueDescriptorForTokenAndTypeDefinition(payload) {
+    var key = "".concat(dasherize(payload.token), "-value");
+    var type = parseValueTypeDefinition(payload);
+    return {
+        type: type,
+        key: key,
+        name: camelize(key),
+        get defaultValue () {
+            return defaultValueForDefinition(payload.typeDefinition);
+        },
+        get hasCustomDefaultValue () {
+            return parseValueTypeDefault(payload.typeDefinition) !== void 0;
+        },
+        reader: readers[type],
+        writer: writers[type] || writers.default
+    };
+}
+var defaultValuesByType = {
+    get array () {
+        return [];
+    },
+    boolean: false,
+    number: 0,
+    get object () {
+        return {};
+    },
+    string: ""
+};
+var readers = {
+    array: function(value) {
+        var array = JSON.parse(value);
+        if (!Array.isArray(array)) throw new TypeError('expected value of type "array" but instead got value "'.concat(value, '" of type "').concat(parseValueTypeDefault(array), '"'));
+        return array;
+    },
+    boolean: function(value) {
+        return !(value == "0" || String(value).toLowerCase() == "false");
+    },
+    number: function(value) {
+        return Number(value);
+    },
+    object: function(value) {
+        var object = JSON.parse(value);
+        if (object === null || typeof object != "object" || Array.isArray(object)) throw new TypeError('expected value of type "object" but instead got value "'.concat(value, '" of type "').concat(parseValueTypeDefault(object), '"'));
+        return object;
+    },
+    string: function(value) {
+        return value;
+    }
+};
+var writers = {
+    default: writeString,
+    array: writeJSON,
+    object: writeJSON
+};
+function writeJSON(value) {
+    return JSON.stringify(value);
+}
+function writeString(value) {
+    return "".concat(value);
+}
+var Controller = /*#__PURE__*/ function() {
+    "use strict";
+    function Controller(context) {
+        _helpers.classCallCheck(this, Controller);
+        this.context = context;
+    }
+    _helpers.createClass(Controller, [
+        {
+            key: "application",
+            get: function get() {
+                return this.context.application;
+            }
+        },
+        {
+            key: "scope",
+            get: function get() {
+                return this.context.scope;
+            }
+        },
+        {
+            key: "element",
+            get: function get() {
+                return this.scope.element;
+            }
+        },
+        {
+            key: "identifier",
+            get: function get() {
+                return this.scope.identifier;
+            }
+        },
+        {
+            key: "targets",
+            get: function get() {
+                return this.scope.targets;
+            }
+        },
+        {
+            key: "classes",
+            get: function get() {
+                return this.scope.classes;
+            }
+        },
+        {
+            key: "data",
+            get: function get() {
+                return this.scope.data;
+            }
+        },
+        {
+            key: "initialize",
+            value: function initialize() {}
+        },
+        {
+            key: "connect",
+            value: function connect() {}
+        },
+        {
+            key: "disconnect",
+            value: function disconnect() {}
+        },
+        {
+            key: "dispatch",
+            value: function dispatch(eventName) {
+                var ref = arguments.length > 1 && arguments[1] !== void 0 ? arguments[1] : {}, _target = ref.target, target = _target === void 0 ? this.element : _target, _detail = ref.detail, detail = _detail === void 0 ? {} : _detail, _prefix = ref.prefix, prefix = _prefix === void 0 ? this.identifier : _prefix, _bubbles = ref.bubbles, bubbles = _bubbles === void 0 ? true : _bubbles, _cancelable = ref.cancelable, cancelable = _cancelable === void 0 ? true : _cancelable;
+                var type = prefix ? "".concat(prefix, ":").concat(eventName) : eventName;
+                var event = new CustomEvent(type, {
+                    detail: detail,
+                    bubbles: bubbles,
+                    cancelable: cancelable
+                });
+                target.dispatchEvent(event);
+                return event;
+            }
+        }
+    ], [
+        {
+            key: "shouldLoad",
+            get: function get() {
+                return true;
+            }
+        }
+    ]);
+    return Controller;
+}();
+Controller.blessings = [
+    ClassPropertiesBlessing,
+    TargetPropertiesBlessing,
+    ValuePropertiesBlessing
+];
+Controller.targets = [];
+Controller.values = {};
+var src_default = /*#__PURE__*/ function(Controller) {
+    "use strict";
+    _helpers.inherits(src_default, Controller);
+    var _super = _helpers.createSuper(src_default);
+    function src_default() {
+        _helpers.classCallCheck(this, src_default);
+        return _super.apply(this, arguments);
+    }
+    _helpers.createClass(src_default, [
+        {
+            key: "initialize",
+            value: function initialize() {
+                var _this = this;
+                this._renderDOMElements();
+                document.addEventListener("keydown", function(event) {
+                    if (event.keyCode === 27) _this.closeModal();
+                });
+            }
+        },
+        {
+            key: "connect",
+            value: function connect() {}
+        },
+        {
+            key: "modalTemplate",
+            get: function get() {
+                return this.modalTemplateTarget.innerHTML;
+            }
+        },
+        {
+            key: "selectModal",
+            value: function selectModal(e) {
+                var target = e.currentTarget;
+                if (this.modalActionValue === "return") {
+                    var ref = _helpers.slicedToArray(this.modalReturnControllerValue.split("#"), 2), targetControllerName = ref[0], targetControllerId = ref[1];
+                    var targetController = this.application.getControllerForElementAndIdentifier(document.getElementById(targetControllerId), targetControllerName);
+                    targetController.receiveModalReturn({
+                        payload: {
+                            kubik_media_upload_id: parseInt(target.dataset.selectedKubikMediaUploadId),
+                            thumb: target.dataset.selectedThumb
+                        },
+                        return_payload: this.modalReturnPayloadValue
+                    });
+                    this.closeModal();
+                }
+            }
+        },
+        {
+            key: "modalStatusValueChanged",
+            value: function modalStatusValueChanged() {
+                if (this.hasModalContainerTarget) {
+                    if (this.modalStatusValue === "opened") this.modalContainerTarget.classList.add("kubik-modal-element__open");
+                    else this.modalContainerTarget.classList.remove("kubik-modal-element__open");
+                }
+            }
+        },
+        {
+            key: "modalSrcValueChanged",
+            value: function modalSrcValueChanged() {
+                if (this.hasModalFrameTarget) {
+                    if (this.modalSrcValue === "") {
+                        this.modalFrameTarget.setAttribute("src", this.modalSrcValue);
+                        this.modalFrameTarget.innerHTML = "";
+                    } else this.modalFrameTarget.setAttribute("src", this.modalSrcValue);
+                }
+            }
+        },
+        {
+            key: "modalHeaderValueChanged",
+            value: function modalHeaderValueChanged() {
+                if (this.hasModalHeaderTarget) this.modalHeaderTarget.innerText = this.modalHeaderValue;
+            }
+        },
+        {
+            key: "openModal",
+            value: function openModal(e) {
+                var target = e.currentTarget;
+                this.modalSrcValue = target.getAttribute("src");
+                this.modalHeaderValue = target.dataset.kubikModalHeaderText;
+                this.modalActionValue = target.dataset.kubikModalAction;
+                this.modalReturnControllerValue = target.dataset.kubikModalReturnController;
+                if (target.dataset.kubikModalReturnPayload) this.modalReturnPayloadValue = JSON.parse(target.dataset.kubikModalReturnPayload);
+                this.modalStatusValue = "opened";
+            }
+        },
+        {
+            key: "closeModal",
+            value: function closeModal() {
+                this.modalStatusValue = "closed";
+                this.modalSrcValue = "";
+                this.modalHeaderValue = "";
+                this.modalActionValue = "";
+                this.modalReturnControllerValue = "";
+                this.modalReturnPayloadValue = {};
+            }
+        },
+        {
+            key: "_renderDOMElements",
+            value: function _renderDOMElements() {
+                if (!document.getElementById("kubik-modal")) document.body.insertAdjacentHTML("beforeend", this.modalTemplate);
+            }
+        }
+    ]);
+    return src_default;
+}(Controller);
+src_default.targets = [
+    "modalTemplate",
+    "modalContainer",
+    "modalFrame",
+    "modalHeader"
+];
+src_default.values = {
+    modalHeader: {
+        type: String,
+        default: ""
+    },
+    modalStatus: {
+        type: String,
+        default: "closed"
+    },
+    modalSrc: {
+        type: String,
+        default: ""
+    },
+    modalAction: {
+        type: String,
+        default: ""
+    },
+    modalReturnPayload: {
+        type: Object,
+        default: {}
+    },
+    modalReturnController: {
+        type: String,
+        default: ""
+    }
+};
+
+},{"@swc/helpers":"lQgvW","@parcel/transformer-js/src/esmodule-helpers.js":"5oERU"}]},["jURw3","5TWp2"], "5TWp2", "parcelRequired5d3")
 
 //# sourceMappingURL=kubik_media_gallery.js.map

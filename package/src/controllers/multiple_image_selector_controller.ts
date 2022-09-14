@@ -2,6 +2,13 @@ import { Controller } from "@hotwired/stimulus"
 import { template } from 'lodash'
 
 export default class extends Controller {
+  relatedMediaValue: Array<{id: number; thumb: string; deleteImage: boolean}>
+  imageContainerTarget: HTMLElement
+  imageTemplateTarget: HTMLElement
+  emptyTemplateTarget: HTMLElement
+  existingFieldsDeleteTemplateTarget: HTMLElement
+  newFieldsTemplateTarget: HTMLElement
+  existingFieldsTemplateTarget: HTMLElement
   static values = {
     relatedMedia: { type: Array, default: [] }
   }
@@ -19,11 +26,11 @@ export default class extends Controller {
     'mediaUploadDelete'
   ]
 
-  connect() {
+  connect(): void {
     this._renderImages()
   }
 
-  _renderImages() {
+  _renderImages(): void {
     this.imageContainerTarget.innerHTML = ''
     this.relatedMediaValue.forEach( function(image, index) {
       const imageData = { ...image, ...{ index: index } }
@@ -43,29 +50,29 @@ export default class extends Controller {
     this.imageContainerTarget.innerHTML += this.emptyTemplate()
   }
 
-  get imageTemplate() {
+  get imageTemplate(): Function {
     return template(this.imageTemplateTarget.innerHTML);
   }
 
-  get emptyTemplate() {
+  get emptyTemplate(): Function {
     return template(this.emptyTemplateTarget.innerHTML);
   }
 
-  get existingFieldsDeleteTemplate() {
+  get existingFieldsDeleteTemplate(): Function {
     return template(this.existingFieldsDeleteTemplateTarget.innerHTML);
   }
 
-  get existingFieldsTemplate() {
+  get existingFieldsTemplate(): Function {
     return template(this.existingFieldsTemplateTarget.innerHTML);
   }
 
-  get newFieldsTemplate() {
+  get newFieldsTemplate(): Function {
     return template(this.newFieldsTemplateTarget.innerHTML);
   }
-  relatedMediaValueChanged() {
+  relatedMediaValueChanged(): void {
     this._renderImages()
   }
-  receiveModalReturn(returnObject) {
+  receiveModalReturn(returnObject): void {
     if(typeof returnObject.return_payload.index !== 'undefined') {
       this.relatedMediaValue = [
         ...this.relatedMediaValue.slice(0, returnObject.return_payload.index),
@@ -79,9 +86,13 @@ export default class extends Controller {
       ]
     }
   }
-  removeImage(e) {
-    const index = e.currentTarget.dataset.imageIndex
-    if(this.relatedMediaValue[index].id) {
+  removeImage(e: Event): void {
+
+    if(!(e.currentTarget instanceof HTMLElement)) {
+      return
+    }
+    var index = parseInt(e.currentTarget.dataset.imageIndex)
+    if(this.relatedMediaValue.length > 0 && this.relatedMediaValue[index].id) {
       this.relatedMediaValue = Object.assign([], this.relatedMediaValue, {[index]: Object.assign(this.relatedMediaValue[index], { deleteImage: true })})
     } else {
       this.relatedMediaValue = [

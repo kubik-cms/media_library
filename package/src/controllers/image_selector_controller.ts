@@ -2,6 +2,20 @@ import { Controller } from "@hotwired/stimulus"
 import { template } from 'lodash'
 
 export default class extends Controller {
+  idValue: Number
+  relatedMediaValue: {
+    id: Number;
+    kubik_media_upload_id: Number;
+    thumb: Array<Object>;
+  }
+  newFieldsTemplateTarget: HTMLElement
+  existingFieldsTemplateTarget: HTMLElement
+  existingFieldsDeleteTemplateTarget: HTMLElement
+  emptyTemplateTarget: HTMLElement
+  imageContainerTarget: HTMLElement
+  imageTemplateTarget: HTMLElement
+
+
   static values = {
     id: Number,
     relatedMedia: Object
@@ -20,11 +34,11 @@ export default class extends Controller {
     'mediaUploadDelete'
   ]
 
-  connect() {
+  connect(): void {
     this._renderResults()
   }
 
-  _renderResults() {
+  _renderResults(): void {
     if(this.relatedMediaValue.thumb && this.relatedMediaValue.thumb.length > 0) {
       this.imageContainerTarget.innerHTML = this.imageTemplate(this.relatedMediaValue)
       if(this.idValue) {
@@ -40,35 +54,35 @@ export default class extends Controller {
     }
   }
 
-  get imageTemplate() {
+  get imageTemplate(): Function {
     return template(this.imageTemplateTarget.innerHTML);
   }
 
-  get emptyTemplate() {
+  get emptyTemplate(): Function {
     return template(this.emptyTemplateTarget.innerHTML);
   }
 
-  get existingFieldsDeleteTemplate() {
+  get existingFieldsDeleteTemplate(): Function {
     return template(this.existingFieldsDeleteTemplateTarget.innerHTML);
   }
 
-  get existingFieldsTemplate() {
+  get existingFieldsTemplate(): Function {
     return template(this.existingFieldsTemplateTarget.innerHTML);
   }
 
-  get newFieldsTemplate() {
+  get newFieldsTemplate(): Function {
     return template(this.newFieldsTemplateTarget.innerHTML);
   }
 
-  relatedMediaValueChanged() {
+  relatedMediaValueChanged(): void {
     this._renderResults()
   }
 
-  receiveModalReturn(returnObject) {
+  receiveModalReturn(returnObject): void {
     this.relatedMediaValue = returnObject.payload
   }
 
-  removeImage() {
+  removeImage(): void {
     this.relatedMediaValue = { id: this.idValue, thumb: null, kubik_media_upload_id: null }
   }
 }

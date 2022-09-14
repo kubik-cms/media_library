@@ -1,9 +1,9 @@
 GIT
   remote: https://github.com/kubik-cms/kubik_interface_elements.git
-  revision: 8c5c3f252439693b94e78fd7594f3c138c7ba512
+  revision: cde437d7c42a1518aa21a868a9aeb9eaf2470ed9
   branch: master
   specs:
-    kubik_interface_elements (0.1.3)
+    kubik_interface_elements (0.2.4)
       activeadmin (>= 1.2.1)
       rails (~> 6.0)
 
@@ -22,10 +22,20 @@ GIT
   specs:
     kubik_styles_base (0.1.0)
 
+GIT
+  remote: https://github.com/rails/webpacker.git
+  revision: dc1482790326ca077577dc957b0be068724b9c7c
+  specs:
+    webpacker (6.0.0.rc.6)
+      activesupport (>= 5.2)
+      rack-proxy (>= 0.6.1)
+      railties (>= 5.2)
+      semantic_range (>= 2.3.0)
+
 PATH
   remote: /kubik_media_library
   specs:
-    kubik_media_library (0.1.11)
+    kubik_media_library (0.1.13)
       aasm (~> 4.12.2)
       activeadmin (>= 1.2.1)
       acts_as_list
@@ -268,6 +278,8 @@ GEM
     rack (2.2.4)
     rack-mini-profiler (2.3.4)
       rack (>= 1.2.0)
+    rack-proxy (0.7.2)
+      rack
     rack-test (2.0.2)
       rack (>= 1.3)
     rails (6.1.6.1)
@@ -331,6 +343,7 @@ GEM
       rexml (~> 3.2, >= 3.2.5)
       rubyzip (>= 1.2.2, < 3.0)
       websocket (~> 1.0)
+    semantic_range (3.0.0)
     shrine (3.4.0)
       content_disposition (~> 1.0)
       down (~> 5.1)
@@ -414,6 +427,7 @@ DEPENDENCIES
   tzinfo-data
   web-console (>= 4.1.0)
   webdrivers
+  webpacker!
 
 RUBY VERSION
    ruby 2.7.6p219

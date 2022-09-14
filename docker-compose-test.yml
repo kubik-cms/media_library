@@ -6,6 +6,12 @@ volumes:
   gem_cache:
   shared_data:
 services:
+  package:
+    build:
+      context: .
+      dockerfile: Dockerfile-package
+    volumes:
+      - ./package/:/kubik_media_library
   source:
     build:
       contenxt: .
@@ -67,3 +73,21 @@ services:
       RAILS_ENV: development
     depends_on:
       - active_admin_sample_db
+  webpack:
+    build:
+      context: ./.active_admin_sample
+      dockerfile: Dockerfile
+    command: 'bin/webpacker-dev-server'
+    volumes:
+      - ./.active_admin_sample:/var/app
+      - shared_data:/var/shared
+      - ./:/kubik_media_library
+      - gem_cache:/usr/local/bundle/gems
+    ports:
+      - "3035:3035"
+    env_file: ./.active_admin_sample/.env.development
+    entrypoint: dev-entrypoint.sh
+    environment:
+      NODE_ENV: development
+      RAILS_ENV: development
+      WEBPACKER_DEV_SERVER_HOST: 0.0.0.0

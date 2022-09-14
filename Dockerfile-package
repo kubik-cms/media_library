@@ -1,0 +1,8 @@
+FROM node:18-alpine
+MAINTAINER Bart Oleszczyk <bart@primate.co.uk>
+
+WORKDIR /kubik_media_library
+RUN npm install -g npm
+ADD ./package/package.json /kubik_media_library/package.json
+
+RUN npm install
