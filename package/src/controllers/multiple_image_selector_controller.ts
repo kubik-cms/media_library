@@ -26,6 +26,7 @@ export default class extends Controller {
     'mediaUploadDelete'
   ]
 
+
   connect(): void {
     this._renderImages()
   }

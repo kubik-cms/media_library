@@ -1,7 +1,7 @@
 module KubikMediaLibrararyPageLayoutOverride
   def build_active_admin_head
     within super do
-      render "admin/kubik/media_library/additional_headers"
+      text_node javascript_pack_tag 'admin'
     end
   end
 

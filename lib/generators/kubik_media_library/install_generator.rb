@@ -15,7 +15,6 @@ module KubikMediaLibrary
 
       def copy_initializers
         copy_file 'config/initializers/shrine.rb', 'config/initializers/shrine.rb'
-        copy_file 'config/initializers/media_library_admin_head_additions.rb', 'config/initializers/media_library_admin_head_additions.rb'
       end
     end
   end

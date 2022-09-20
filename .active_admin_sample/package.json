@@ -4,8 +4,8 @@
   "dependencies": {
     "@hotwired/stimulus": "^3.0.1",
     "@hotwired/turbo-rails": "^7.1.3",
-    "@kubik-cms/kubik_interface_elements": "^0.1.0",
-    "@kubik-cms/media_library": "^0.1.9",
+    "@kubik-cms/interface_elements": "^0.1.6",
+    "@kubik-cms/media_library": "file:///kubik_media_library/package",
     "@rails/actioncable": "^6.0.0",
     "@rails/activestorage": "^6.0.0",
     "@rails/ujs": "^6.0.0",

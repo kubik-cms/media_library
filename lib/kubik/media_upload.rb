@@ -156,7 +156,7 @@ module Kubik
     validates_presence_of :image, if: Proc.new { |u| u.file.blank? }
     validates_presence_of :file, if: Proc.new { |u| u.image.blank? }
 
-    has_many :kubik_uploads, class_name: 'Kubik::Upload'
+    has_many :kubik_uploads, class_name: 'Kubik::Upload', foreign_key: 'kubik_media_upload_id', dependent: :destroy, inverse_of: :uploadable
 
     scope(:pdf_files, lambda do
       where('file_data @> ?', {
