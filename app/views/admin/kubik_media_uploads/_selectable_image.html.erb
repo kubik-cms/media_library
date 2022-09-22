@@ -2,7 +2,7 @@
                 class: 'kubik-media-gallery--media_item_container kubik-media-gallery--media_item_container__small',
                 'data-selected-kubik-media-upload-id': image.id,
                 'data-selected-thumb': image.admin_image_thumbnail,
-                'data-selected-image-info': {alt_text: image.alt_text, credit: image.img_credit},
+                'data-selected-additional-info': image.additional_info,
                 'data-action': 'click->kubik-modal#selectModal') do %>
   <% file = image.image.present? ? image.image : image.file %>
   <% mime_type = file.metadata['mime_type'] %>
