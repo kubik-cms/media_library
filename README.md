@@ -1,23 +1,23 @@
 # KubikMediaLibrary
 
-Add the ability to preview individual model pages.
-
 ## Installation
 
 Add this line to your application's Gemfile:
 
 ```ruby
-gem 'kubik_previewable', github: 'primate_inc/kubik_previewable'
+gem 'kubik_media_library', github: 'kubik-inc/media_library'
 ```
 
 And then execute:
 
-    $ bundle install
-    $ gem install kubik_media_library
+```bash
+bundle install
+rails g kubik:media_library:install
+```
 
 ## Usage
 
-You can quickly add the ability to preview individual model pages.
+You can quickly add the ability to add media library attachments and attach them to instances of models in your application
 
 ```ruby
 class Blog < ApplicationRecord
