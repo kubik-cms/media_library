@@ -24,7 +24,7 @@ module Kubik
        FALLBACK_PATH if derivative
     end
 
-    def generate_location(io, context)
+    def generate_location(io, **context)
       path = super[%r{^(.*[\\\/])}]
       version = context[:derivative]
       is_original = version.nil? || version == :original

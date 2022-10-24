@@ -26,8 +26,8 @@ Gem::Specification.new do |spec|
 
   # Uncomment to register a new dependency of your gem
   # spec.add_dependency "example-gem", "~> 1.0"
-  spec.add_dependency "aasm", "~> 4.12.2"
-  spec.add_dependency "activeadmin", ">= 1.2.1"
+  spec.add_dependency "aasm"
+  spec.add_dependency "activeadmin"
   spec.add_dependency "acts_as_list"
   spec.add_dependency "image_processing", "~> 1.0"
   spec.add_dependency "image_optim"
@@ -35,7 +35,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'shrine'
   spec.add_dependency 'fastimage'
   spec.add_development_dependency "pg"
-  spec.add_dependency "rails", "~> 6.0"
+  spec.add_dependency "rails"
   spec.add_dependency "ruby-vips"
   spec.add_development_dependency "warning"
 
