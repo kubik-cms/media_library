@@ -83,7 +83,7 @@ export default class extends Controller {
     } else {
       this.relatedMediaValue = [
         ...this.relatedMediaValue,
-        Object.assign(returnObject.payload, { id: null })
+        Object.assign(returnObject.payload, {})
       ]
     }
   }

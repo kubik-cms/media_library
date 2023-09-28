@@ -243,6 +243,16 @@ module Kubik
       path
     end
 
+    def return_object
+      {
+        display_name: image_data.deep_symbolize_keys.dig(:metadata, :filename),
+        id: id,
+        thumb: image_url(:thumb_200x200),
+        status_info: { active: true },
+        url: Rails.application.routes.url_helpers.admin_kubik_media_uploads_path(self, kubik_search: true, format: :json)
+      }
+    end
+
     private
 
 
