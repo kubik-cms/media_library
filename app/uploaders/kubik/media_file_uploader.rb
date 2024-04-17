@@ -11,6 +11,7 @@ module Kubik
 
     plugin :processing
     plugin :store_dimensions
+    plugin :validation
 
     Attacher.validate do
       validate_max_size MAX_SIZE, message: 'is too large (max is 10 MB)'

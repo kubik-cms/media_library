@@ -14,6 +14,7 @@ module Kubik
     plugin :derivatives
     plugin :activerecord
     plugin :pretty_location
+    plugin :validation
 
     Attacher.validate do
       validate_max_size MAX_SIZE, message: 'is too large (max is 10 MB)'
