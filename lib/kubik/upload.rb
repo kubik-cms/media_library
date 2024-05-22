@@ -25,6 +25,10 @@ module Kubik
       ["additional_info", "created_at", "kubik_media_upload_id", "updated_at", "uploadable_id", "uploadable_type"]
     end
 
+    def self.ransackable_associations(auth_object = nil)
+      ["kubik_media_upload", "uploadable"]
+    end
+
     private
 
     def thumb
