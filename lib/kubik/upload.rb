@@ -22,7 +22,7 @@ module Kubik
     delegate :admin_image_thumbnail, :image, :image_url, :file, :file_url, :additional_info, to: :kubik_media_upload
 
     def self.ransackable_attributes(auth_object = nil)
-      ["additional_info", "created_at", "kubik_media_upload_id", "updated_at", "uploadable_id", "uploadable_type"]
+      ["additional_info", "created_at", "id", "kubik_media_upload_id", "updated_at", "uploadable_id", "uploadable_type"]
     end
 
     def self.ransackable_associations(auth_object = nil)
