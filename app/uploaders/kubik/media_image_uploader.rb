@@ -29,8 +29,13 @@ module Kubik
       path = super[%r{^(.*[\\\/])}]
       version = context[:derivative]
       is_original = version.nil? || version == :original
-      return path + context[:metadata]['filename'].tr(' ', '_') if is_original
 
+      # Save original image
+      if is_original
+        return path + context[:metadata]['filename'].tr(' ', '_')
+      end
+
+      # Handle derivatives
       orig_filename = context[:record].image_data['metadata']['filename']
       filename = "#{version}-#{orig_filename.tr(' ', '_')}"
       path + filename
