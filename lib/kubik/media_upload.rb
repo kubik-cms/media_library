@@ -255,21 +255,20 @@ module Kubik
 
     private
 
+    def send_to_optimising
+      OptimiseImageJob.perform_later(self) if image_data.present?
+    end
 
     def send_to_generate_thumbnails
       CreateImageThumbnailsJob.perform_later(self)
     end
 
-    def send_to_optimising
-      OptimiseImageJob.perform_later(self) if image_data.present?
-    end
-
     def send_for_resizing
-      ResizeImagesJob.perform_later(self, :square)
-      ResizeImagesJob.perform_later(self, :portrait)
-      ResizeImagesJob.perform_later(self, :landscape)
-      ResizeImagesJob.perform_later(self, :panoramic)
-      ResizeImagesJob.perform_later(self, :content)
+      Kubik::MediaUpload.available_derivatives.except(:thumb).each do |_size, thumbs|
+        thumbs.each do |thumb_name, options|
+          ResizeImagesJob.perform_later(self, thumb_name, options)
+        end
+      end
     end
   end
 end

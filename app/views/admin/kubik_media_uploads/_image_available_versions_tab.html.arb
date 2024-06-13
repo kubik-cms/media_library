@@ -1,12 +1,12 @@
 attributes_table_for image.object do
   row 'Original' do
-    "Original - #{image.object.image_url}"
+    [link_to('Original ', image.object.image_url), "- #{image.object.image_url}" ].join(' ').html_safe
   end
   row 'Optimised' do
-    "Optimised - #{image.object.image_url(:optimised)}"
+    [link_to("Optimised", image.object.image_url(:optimised)), "- #{image.object.image_url(:optimised)}"].join(' ').html_safe
   end
   Kubik::MediaUpload.available_derivatives.each do |group, crops|
-    c = crops.map { |crop| div "#{crop[0].to_s.humanize} - #{image.object.image_url(crop[0])}" }
+    c = crops.map { |crop| div [link_to("#{crop[0].to_s.humanize}", image.object.image_url(crop[0])), "- #{image.object.image_url(crop[0])}"].join(' ').html_safe }
     row group.to_s.humanize do
       c.join('').html_safe
     end
