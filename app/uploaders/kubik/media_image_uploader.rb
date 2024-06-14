@@ -22,7 +22,11 @@ module Kubik
     end
 
     Attacher.default_url do |derivative: nil, **|
-       FALLBACK_PATH if derivative
+      if derivative
+        fallback = derivatives[:optimised]&.url
+        fallback = file&.url unless fallback.present?
+      end
+      fallback
     end
 
     def generate_location(io, **context)

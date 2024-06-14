@@ -143,7 +143,7 @@ module Kubik
       end
     end
 
-    after_create :process!
+    after_commit :process!
 
     if defined?(acts_as_taggable_on)
       acts_as_taggable_on :media_tags
