@@ -11,12 +11,11 @@ class OptimiseImageJob < ApplicationJob
 
       record.image_attacher.file.open do |io|
         optimized_path = image_optim.optimize_image(io)
+
         if optimized_path.present?
-          optimized_path.open do |oo|
-            record.image_attacher.merge_derivatives record.image_attacher.upload_derivatives({ optimised: oo })
-          end
+          record.image_attacher.create_derivatives(optimised: optimized_path)
         else
-          record.image_attacher.merge_derivatives record.image_attacher.upload_derivatives({ optimised: io })
+          record.image_attacher.create_derivatives(optimised: io)
         end
       end
       record.save
