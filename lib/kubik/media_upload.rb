@@ -179,7 +179,6 @@ module Kubik
     end
 
     def optimise_image
-      image_attacher.finalize
       optimise!
       send(:send_to_optimising)
     end
