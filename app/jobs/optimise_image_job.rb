@@ -9,7 +9,9 @@ class OptimiseImageJob < ApplicationJob
         jpegoptim: { allow_lossy: true, max_quality: 85 }
       )
 
-      record.image_attacher.file.open do |io|
+      tempfile = record.image_attacher.file.download
+
+      File.open(tempfile.path) do |io|
         optimized_path = image_optim.optimize_image(io)
 
         if optimized_path.present?
