@@ -13,12 +13,15 @@ class OptimiseImageJob < ApplicationJob
         optimized_path = image_optim.optimize_image(io)
 
         if optimized_path.present?
-          record.image_attacher.add_derivative(optimised: File.open(optimized_path.to_s))
-          record.image_attacher.atomic_persist
+          File.open(optimized_path.to_s) do |file|
+            record.image_attacher.add_derivative(:optimised, file)
+          end
         else
-          record.image_attacher.create_derivatives(optimised: io)
+          record.image_attacher.add_derivative(:optimised, io)
         end
+        record.image_attacher.atomic_persist
       end
     end
+    record.save
   end
 end
