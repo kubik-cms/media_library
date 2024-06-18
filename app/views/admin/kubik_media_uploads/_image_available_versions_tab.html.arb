@@ -11,8 +11,8 @@ attributes_table_for image.object do
         div [
           link_to("#{crop[0].to_s.humanize}", image.object.image_url(crop[0])), 
           "- #{image.object.image_url(crop[0])}"
-        ].join(' ').html_safe
-      end
+        ]
+      end.join(' ').html_safe
     end
   end
 end
