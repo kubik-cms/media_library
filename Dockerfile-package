@@ -6,3 +6,4 @@ RUN npm install -g npm
 ADD ./package/package.json /kubik_media_library/package.json
 
 RUN npm install
+RUN chown -R 1000:1000 "/root/.npm"

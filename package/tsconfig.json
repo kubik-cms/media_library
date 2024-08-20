@@ -2,7 +2,7 @@
   "compilerOptions": {
     "lib": ["dom", "es6"],
     "target": "es6",
-    "types": ["vite/client", "jest"],
+    "types": ["vite/client"],
     "skipLibCheck": true,
     "moduleResolution": "node"
   }

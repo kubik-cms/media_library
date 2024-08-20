@@ -1,1 +1,9 @@
-<%= turbo_stream.replace "media_list", 'test' %>
+<%= turbo_stream.replace "media_list", method: :morph do %>
+   <turbo-frame class='kubik-media-library-listing' id='media_list'>
+      <% if @modal %>
+        <%= render partial: 'selectable_image', locals: { modal: @modal }, collection: @collection, as: :image %>
+      <% else %>
+        <%= render partial: 'image', locals: { modal: @modal }, collection: @collection, as: :image %>
+      <% end %>
+   </turbo-frame>
+<% end %>

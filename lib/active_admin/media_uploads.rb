@@ -39,6 +39,9 @@ ActiveAdmin.register Kubik::MediaUpload do
       #turbo_enabled = Mime::Type.lookup_by_extension(:turbo_stream).present?
       params[:kubik_media_upload][:file] = params[:kubik_media_upload].delete(:image) if Kubik::MediaFileUploader::ALLOWED_TYPES.include?(params[:kubik_media_upload][:image].content_type)
       create! do |success, failure|
+        @collection = scoped_collection
+        @collection = @collection.order(created_at: :desc).page(params[:page]).per(MEDIA_PER_PAGE)
+        @modal = params[:kubik_media_upload][:modal].present? ? true : false
         success.html { redirect_to admin_kubik_media_uploads_path }
         success.json
         success.turbo_stream

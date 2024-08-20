@@ -1,5 +1,6 @@
 import { Dropzone } from "dropzone";
 import { Controller } from "@hotwired/stimulus"
+import * as Turbo from "@hotwired/turbo"
 
 export default class extends Controller {
   formTarget: HTMLElement
@@ -7,12 +8,14 @@ export default class extends Controller {
   submitTarget: HTMLElement
   placeholderTarget: HTMLElement
   textValue: string
+  modalValue: Boolean
   turboValue: Boolean
 
   static targets = [ "input", "text", "submit", "placeholder", "form" ]
   static values = {
     text: String,
-    turbo: Boolean
+    turbo: Boolean,
+    modal: Boolean
   }
 
   connect(): void {
@@ -22,6 +25,10 @@ export default class extends Controller {
       thumbnailWidth: 180,
       thumbnailMethod: 'crop',
       headers: this.headers,
+      success: (file, response) => {
+        file.previewElement.remove();
+        Turbo.renderStreamMessage(response)
+      }
     })
     this.element.classList.add('dropzone_ready')
   }

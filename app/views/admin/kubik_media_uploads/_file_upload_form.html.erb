@@ -4,6 +4,7 @@
       <i class='upload-icon material-symbols-outlined'>file_upload</i>
       <p id='upload-text' class='upload-text' data-image_dropzone-target='text'>Select a file</p>
     <% end %>
+    <%= f.input :modal, as: :hidden, input_html: { value: (modal ? 'true' : nil) } %>
     <%= f.input :image, as: :file, input_html: {'data-image_dropzone-target': 'input', 'data-action': 'change->image_dropzone#file_changed'} %>
   <% end %>
   <%= f.actions do %>

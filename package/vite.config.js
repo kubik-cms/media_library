@@ -8,6 +8,7 @@ export default defineConfig({
       name: 'media_library'
     },
     rollupOptions: {
+      input: 'src/index.ts',
       external: ['stimulus'],
       output: {
         globals: {

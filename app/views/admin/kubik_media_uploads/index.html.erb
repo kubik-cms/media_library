@@ -5,16 +5,17 @@
          id='kubik-media-gallery--file_upload_form--container'
          data-controller='image_dropzone'
          data-image_dropzone-text-value='Select a file'
+         data-image-dropzone-modal-value='<%= modal %>'
          data-image_dropzone-turbo-value="<%= Mime::Type.lookup_by_extension(:turbo_stream).present? %>">
-      <%= render 'file_upload_form' %>
+      <%= render 'file_upload_form', modal: modal %>
     </div>
-    <div class='kubik-media-library-listing' id='media_list'>
+    <turbo-frame class='kubik-media-library-listing' id='media_list'>
       <% if modal %>
         <%= render partial: 'selectable_image', locals: { modal: modal }, collection: @collection, as: :image %>
       <% else %>
         <%= render partial: 'image', locals: { modal: modal }, collection: @collection, as: :image %>
       <% end %>
-    </div>
+    </turbo-frame>
     <div class='kubik-pagination' id='index_footer'>
       <%= paginate @collection, theme: 'kubik', turbo_action: turbo_action %>
     </div>

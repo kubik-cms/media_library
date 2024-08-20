@@ -26,7 +26,7 @@ RUN apt-get install -y \
 RUN mkdir /kubik_metatagable
 RUN mkdir -p /vendor/bundle
 
-RUN gem install bundler
+RUN gem install bundler  -v 2.4.22
 
 ENV APP_PATH /kubik_media_gallery/test/dummy
 WORKDIR /tmp
@@ -41,5 +41,5 @@ WORKDIR /kubik_media_library
 RUN curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add -
 RUN echo "deb https://dl.yarnpkg.com/debian/ stable main" | tee /etc/apt/sources.list.d/yarn.list
 RUN apt-get update && apt-get -y install yarn
-RUN yarn global add node-gyp
+#RUN yarn global add node-gyp
 RUN yarn install
