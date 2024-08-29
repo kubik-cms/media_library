@@ -23,16 +23,15 @@ ActiveAdmin.register Kubik::MediaUpload do
 
   controller do
     def permitted_params
-      params.permit(:authenticity_token, :commit, kubik_media_upload: [:image, :file, :media_tag_list, additional_info: {}])
+      params.permit(:authenticity_token, :commit, kubik_media_upload: [:image, :file, :media_tag_list, additional_info: {}], media_upload: [:image, :file, :media_tag_list, additional_info: {}])
     end
 
     def index
       @page_title = 'Media gallery'
       @collection = scoped_collection
       @collection = @collection.order(created_at: :desc).page(params[:page]).per(MEDIA_PER_PAGE)
-      modal = params[:modal].present? ? true : false
-      turbo_action = modal ? false : 'advance'
-      render 'index', locals: { modal: modal, turbo_action: turbo_action }, layout: 'active_admin'
+      turbo_action = params['modal'].present? ? 'advance' : false
+      render 'index', locals: { modal: params['modal'].present?, turbo_action: turbo_action }, layout: 'active_admin'
     end
 
     def create
@@ -42,6 +41,8 @@ ActiveAdmin.register Kubik::MediaUpload do
         @collection = scoped_collection
         @collection = @collection.order(created_at: :desc).page(params[:page]).per(MEDIA_PER_PAGE)
         @modal = params[:kubik_media_upload][:modal].present? ? true : false
+        @turbo_action = (params[:kubik_media_upload][:modal].present? || params['modal'].present?) ?
+          'advance' : false
         success.html { redirect_to admin_kubik_media_uploads_path }
         success.json
         success.turbo_stream

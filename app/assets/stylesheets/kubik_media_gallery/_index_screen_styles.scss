@@ -1,3 +1,13 @@
+#media_frame {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  #kubik-modal & .kubik-pagination {
+    padding-left: 1rem;
+    padding-right: 1rem;
+    margin-bottom: 0;
+  }
+}
 #media_list {
   display: flex;
   flex-direction: row;

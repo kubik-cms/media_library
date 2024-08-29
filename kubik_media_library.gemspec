@@ -1,6 +1,6 @@
 Gem::Specification.new do |spec|
   spec.name          = "kubik_media_library"
-  spec.version       = "0.1.35"
+  spec.version       = "0.1.36"
   spec.authors       = ["Bart Oleszczyk"]
   spec.email         = ["bart@primate.co.uk"]
 

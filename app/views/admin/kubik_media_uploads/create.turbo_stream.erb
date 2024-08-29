@@ -1,9 +1,14 @@
-<%= turbo_stream.replace "media_list", method: :morph do %>
-   <turbo-frame class='kubik-media-library-listing' id='media_list'>
+<%= turbo_stream.replace "media_frame", method: :morph do %>
+  <turbo-frame id='media_frame'>
+    <div id='media_list' class='kubik-media-library-listing'>
       <% if @modal %>
         <%= render partial: 'selectable_image', locals: { modal: @modal }, collection: @collection, as: :image %>
       <% else %>
         <%= render partial: 'image', locals: { modal: @modal }, collection: @collection, as: :image %>
       <% end %>
-   </turbo-frame>
+    </div>
+    <div class='kubik-pagination' id='index_footer'>
+      <%= paginate @collection, theme: 'kubik', turbo_action: @turbo_action %>
+    </div>
+  </turbo-frame>
 <% end %>
