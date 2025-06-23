@@ -42,8 +42,8 @@ Gem::Specification.new do |spec|
   spec.add_dependency "ruby-vips"
   spec.add_development_dependency "warning"
 
-  # Optional dependencies
-  spec.add_optional_dependency "kubik_wysiwyg"
+  # Optional dependencies (not declared in gemspec - see README.md for details)
+  # - kubik_wysiwyg: Provides WYSIWYG editor integration
 
   # For more information and examples about making a new gem, checkout our
   # guide at: https://bundler.io/guides/creating_gem.html
