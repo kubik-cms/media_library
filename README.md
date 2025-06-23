@@ -15,6 +15,28 @@ bundle install
 rails g kubik:media_library:install
 ```
 
+## Optional Dependencies
+
+This gem supports optional dependencies that can be added to your application for enhanced functionality:
+
+### kubik_wysiwyg
+
+The `kubik_wysiwyg` gem is an optional dependency that provides WYSIWYG editor integration. To use it, add it to your Gemfile:
+
+```ruby
+gem 'kubik_wysiwyg'
+```
+
+You can check if the WYSIWYG functionality is available in your code:
+
+```ruby
+if KubikMediaLibrary.wysiwyg_available?
+  # WYSIWYG features are available
+else
+  # WYSIWYG features are not available
+end
+```
+
 ## Usage
 
 You can quickly add the ability to add media library attachments and attach them to instances of models in your application

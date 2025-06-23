@@ -1,3 +1,6 @@
+# frozen_string_literal: true
+require_relative "lib/kubik_media_library/version"
+
 Gem::Specification.new do |spec|
   spec.name          = "kubik_media_library"
   spec.version       = "0.1.36"
@@ -38,6 +41,9 @@ Gem::Specification.new do |spec|
   spec.add_dependency "rails"
   spec.add_dependency "ruby-vips"
   spec.add_development_dependency "warning"
+
+  # Optional dependencies
+  spec.add_optional_dependency "kubik_wysiwyg"
 
   # For more information and examples about making a new gem, checkout our
   # guide at: https://bundler.io/guides/creating_gem.html

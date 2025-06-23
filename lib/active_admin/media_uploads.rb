@@ -64,13 +64,26 @@ ActiveAdmin.register Kubik::MediaUpload do
                 end
                 column do
                   image.fields_for :additional_info do |f|
-                    f.input :img_title, input_html: { value: image.object.additional_info['img_title'] }
+                    # Use WYSIWYG editor if available, otherwise use regular text input
+                    if KubikMediaLibrary.wysiwyg_available?
+                      f.input :img_title, as: :kubik_wysiwyg, input_html: { value: image.object.additional_info['img_title'] }
+                    else
+                      f.input :img_title, input_html: { value: image.object.additional_info['img_title'] }
+                    end
                   end
                   image.fields_for :additional_info do |f|
-                    f.input :alt_text, input_html: { value: image.object.additional_info['alt_text'] }
+                    if KubikMediaLibrary.wysiwyg_available?
+                      f.input :alt_text, as: :kubik_wysiwyg, input_html: { value: image.object.additional_info['alt_text'] }
+                    else
+                      f.input :alt_text, input_html: { value: image.object.additional_info['alt_text'] }
+                    end
                   end
                   image.fields_for :additional_info do |f|
-                    f.input :img_credit, input_html: { value: image.object.additional_info['img_credit'] }
+                    if KubikMediaLibrary.wysiwyg_available?
+                      f.input :img_credit, as: :kubik_wysiwyg, input_html: { value: image.object.additional_info['img_credit'] }
+                    else
+                      f.input :img_credit, input_html: { value: image.object.additional_info['img_credit'] }
+                    end
                   end
                 end
               end
