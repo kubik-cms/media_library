@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+require "kubik_media_library/version"
 require "aasm"
 require "activeadmin"
 require "acts_as_list"

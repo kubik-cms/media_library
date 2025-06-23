@@ -3,7 +3,7 @@ require_relative "lib/kubik_media_library/version"
 
 Gem::Specification.new do |spec|
   spec.name          = "kubik_media_library"
-  spec.version       = "0.1.36"
+  spec.version       = KubikMediaLibrary::VERSION
   spec.authors       = ["Bart Oleszczyk"]
   spec.email         = ["bart@primate.co.uk"]
 
