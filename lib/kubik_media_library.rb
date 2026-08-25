@@ -51,8 +51,11 @@ module KubikMediaLibrary
 
       initializer :kubik_media_library_active_admin do |app|
         lib_root = File.dirname(__FILE__)
-        ::ActiveAdmin.application.load_paths += Dir[File.join(lib_root, 'arbre')]
-        ::ActiveAdmin.application.load_paths += Dir[File.join(lib_root, 'active_admin', 'views')]
+
+        ActiveSupport.on_load(:active_admin) do
+          ::ActiveAdmin.application.load_paths += Dir[File.join(lib_root, 'arbre')]
+          ::ActiveAdmin.application.load_paths += Dir[File.join(lib_root, 'active_admin', 'views')]
+        end
 
         app.config.to_prepare do
           require "kubik_media_library/active_admin/registration"

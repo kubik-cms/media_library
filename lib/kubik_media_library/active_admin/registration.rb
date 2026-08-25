@@ -14,7 +14,6 @@ module KubikMediaLibrary
 
           config.filters = false
           config.per_page = KubikMediaLibrary.config.active_admin_per_page
-          config.batch_actions = false
 
           permit_params :image, :file, :media_tag_list, additional_info: {}
 

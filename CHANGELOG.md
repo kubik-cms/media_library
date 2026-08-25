@@ -1,5 +1,12 @@
 ## [Unreleased]
 
+## [0.2.3] - 2026-08-25
+
+### Fixed
+
+- Remove `config.batch_actions = false` from ActiveAdmin registration (not supported on all ActiveAdmin versions; custom gallery index does not use batch actions anyway)
+- Defer ActiveAdmin load path setup to `ActiveSupport.on_load(:active_admin)` so extensions are available before registration
+
 ## [0.2.2] - 2026-08-25
 
 ### Fixed
