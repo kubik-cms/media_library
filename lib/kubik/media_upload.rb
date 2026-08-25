@@ -320,6 +320,37 @@ module Kubik
       }
     end
 
+    def image_derivative?(key)
+      image_data.present? && image_attacher.derivatives.key?(key.to_sym)
+    end
+
+    def modern_derivative_key(base_key, format = :webp)
+      :"#{base_key}_#{format}"
+    end
+
+    def modern_derivative_available?(base_key, format = :webp)
+      fmt = format.to_sym
+      return false unless KubikMediaLibrary.processor.available_modern_formats.include?(fmt)
+
+      image_derivative?(modern_derivative_key(base_key, fmt))
+    end
+
+    def preferred_image_derivative(base_key, format: :auto)
+      key = base_key.to_sym
+
+      formats = format.to_sym == :auto ? self.class.preferred_modern_formats : [format.to_sym]
+      formats.each do |fmt|
+        modern_key = modern_derivative_key(key, fmt)
+        return modern_key if image_derivative?(modern_key)
+      end
+
+      key
+    end
+
+    def self.preferred_modern_formats
+      KubikMediaLibrary.processor.available_modern_formats.reverse
+    end
+
     private
 
     def send_to_optimising

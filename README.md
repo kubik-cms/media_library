@@ -156,6 +156,63 @@ RUN apt-get install -y libvips libvips-dev libwebp-dev libavif-dev libheif-dev
 
 If AVIF encoding is unavailable, set `config.modern_formats = [:webp]` until AVIF libraries are installed.
 
+## Serving images in views
+
+Modern format derivatives are stored as separate files (e.g. `content_800_webp`, `content_800_avif`). The intended consumption pattern is **`<picture>` with explicit sources**, not `Accept` header negotiation.
+
+Helpers are included automatically in ActionView (`KubikMediaLibrary::ViewHelper`).
+
+### Model helpers
+
+```ruby
+upload = blog.header_image # Kubik::Upload or Kubik::MediaUpload
+
+upload.image_derivative?(:content_800_webp)           # => true/false
+upload.modern_derivative_key(:content_800, :webp)   # => :content_800_webp
+upload.modern_derivative_available?(:content_800, :webp)
+upload.preferred_image_derivative(:content_800)     # best available key (AVIF → WebP → base)
+```
+
+### `kubik_image_url`
+
+Picks the best available modern format when `prefer_modern: true` (default), using `KubikMediaLibrary.processor.available_modern_formats`:
+
+```erb
+<%= kubik_image_url(blog.header_image, :content_800) %>
+<%= kubik_image_url(blog.header_image, :social_og, prefer_modern: false) %>
+```
+
+### `kubik_srcset`
+
+Build a responsive `srcset` from derivative keys and widths:
+
+```erb
+<%= kubik_srcset(blog.header_image, { content_400: 400, content_800: 800, content_1200: 1200 }) %>
+```
+
+Pass `prefer_modern: false` or `format: :webp` to control format selection per srcset.
+
+### `kubik_picture_tag`
+
+Encapsulates `<picture>` + `<source>` + `<img>`:
+
+```erb
+<%= kubik_picture_tag(
+      blog.header_image,
+      default_key: :content_800,
+      srcset: { content_400: 400, content_800: 800, content_1200: 1200 },
+      sizes: '(max-width: 800px) 100vw, 800px',
+      alt: blog.title,
+      class: 'hero-image'
+    ) %>
+```
+
+- Modern `<source>` tags are emitted for each available format (AVIF first, then WebP)
+- The `<img>` fallback uses the base JPEG/PNG derivative
+- Without `srcset`, sources point at a single modern URL per format for `default_key`
+
+Use base derivatives (`:social_og`, etc.) for Open Graph / Twitter meta tags — crawlers expect JPEG/PNG.
+
 ## ActiveAdmin menu customization
 
 ### Menu placement via initializer (recommended)

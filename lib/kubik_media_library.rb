@@ -13,6 +13,7 @@ require "kubik/derivatives_completion"
 require "kubik/processing/format_support"
 require "kubik/processing/adapter"
 require "kubik/processing/vips_adapter"
+require "kubik_media_library/view_helper"
 
 # Optional dependencies
 begin
@@ -48,6 +49,12 @@ module KubikMediaLibrary
       isolate_namespace KubikMediaLibrary
 
       config.assets.precompile += %w( kubik_media_gallery.js )
+
+      initializer :kubik_media_library_view_helper do
+        ActiveSupport.on_load(:action_view) do
+          include KubikMediaLibrary::ViewHelper
+        end
+      end
 
       initializer :kubik_media_library_active_admin do |app|
         lib_root = File.dirname(__FILE__)

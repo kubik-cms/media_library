@@ -1,5 +1,18 @@
 ## [Unreleased]
 
+## [0.2.7] - 2026-08-25
+
+### Added
+
+- `Kubik::MediaUpload` helpers: `image_derivative?`, `modern_derivative_key`, `modern_derivative_available?`, `preferred_image_derivative`
+- `KubikMediaLibrary::ViewHelper` with `kubik_image_url`, `kubik_srcset`, and `kubik_picture_tag`
+- Helpers use `KubikMediaLibrary.processor.available_modern_formats` (AVIF preferred over WebP in `<picture>`)
+- README section documenting the `<picture>` serving pattern
+
+### Fixed
+
+- `Attacher.default_url` uses expression values instead of `return`/`next` inside the block
+
 ## [0.2.6] - 2026-08-25
 
 ### Fixed
