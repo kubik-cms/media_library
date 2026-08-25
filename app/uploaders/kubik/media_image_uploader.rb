@@ -23,17 +23,18 @@ module Kubik
     end
 
     Attacher.default_url do |derivative: nil, **|
-      next unless derivative
+      if derivative
+        sym = derivative.to_sym
+        base_fallback =
+          if (match = sym.to_s.match(/\A(.+)_(webp|avif)\z/))
+            derivatives[match[1].to_sym]&.url
+          end
 
-      sym = derivative.to_sym
-      return derivatives[sym].url if derivatives[sym]
-
-      if (match = sym.to_s.match(/\A(.+)_(webp|avif)\z/))
-        base = match[1].to_sym
-        return derivatives[base].url if derivatives[base]
+        derivatives[sym]&.url ||
+          base_fallback ||
+          derivatives[:optimised]&.url ||
+          file&.url
       end
-
-      derivatives[:optimised]&.url || file&.url
     end
 
     def generate_location(io, **context)
