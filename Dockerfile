@@ -23,6 +23,7 @@ RUN apt-get install -y \
             libvips \
             libvips-dev \
             libvips-tools \
+            libwebp-dev \
             libavif-dev \
             libheif-dev
 RUN mkdir /kubik_metatagable

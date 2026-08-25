@@ -1,5 +1,20 @@
 ## [Unreleased]
 
+## [0.2.6] - 2026-08-25
+
+### Fixed
+
+- `FormatSupport` now recognises dotted Vips suffixes (`.webp`, `.avif`) and runs an encoding smoke test before enabling a format
+- `VipsAdapter` generates WebP/AVIF variants before persisting the base derivative (temp file was deleted too early)
+- Runtime encode failures call `FormatSupport.mark_unavailable!` so `derivatives_complete?` does not wait for formats that cannot be created
+
+### Added
+
+- Admin "Available versions" tab lists WebP/AVIF variants alongside base derivatives
+- Tests for suffix detection and WebP derivative generation
+- README and generator docs for runtime dependencies (`libvips`, `libwebp`, `libavif`, `libheif`)
+- `libwebp-dev` added to gem Dockerfile
+
 ## [0.2.5] - 2026-08-25
 
 ### Fixed

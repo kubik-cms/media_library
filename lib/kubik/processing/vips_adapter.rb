@@ -53,12 +53,13 @@ module Kubik
           record.image(:optimised).open do |io|
             pipeline = ImageProcessing::Vips.source(io)
             resized = pipeline.public_send(resize_method, *resize_options).call
-            attacher.add_derivative(name, resized)
-            created << name
 
             create_modern_variants(attacher, resized, name).each do |variant|
               created << variant
             end
+
+            attacher.add_derivative(name, resized)
+            created << name
           end
           attacher.atomic_persist
         end
@@ -84,7 +85,7 @@ module Kubik
           attacher.add_derivative(variant_name, variant_file)
           created << variant_name
         rescue StandardError => e
-          Kubik::Processing::FormatSupport.warn_once(format, e.message)
+          Kubik::Processing::FormatSupport.mark_unavailable!(format, e.message)
         end
 
         created

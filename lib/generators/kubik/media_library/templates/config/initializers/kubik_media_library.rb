@@ -22,6 +22,8 @@ KubikMediaLibrary.configure do |config|
   # Modern format outputs alongside JPEG/PNG derivatives
   # config.modern_formats = [:webp, :avif]
   # config.modern_format_quality = { webp: 80, avif: 65 }
+  #
+  # System packages (see README): libvips, libwebp-dev, libavif-dev, libheif-dev
 
   # Set false to register ActiveAdmin resource in app/admin/kubik_media_uploads.rb
   # config.auto_register_active_admin = false

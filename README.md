@@ -130,11 +130,31 @@ upload.regenerate_derivatives!
 
 When enabled, each base derivative also generates `:_webp` and/or `:_avif` variants (e.g. `:square_800_webp`).
 
-If system libraries are missing, the gem logs a warning and skips that format — processing continues without errors.
-
-Optional system packages for AVIF: `libavif-dev`, `libheif-dev` (WebP is usually available with libvips).
+If system libraries are missing or encoding fails, the gem logs a warning and skips that format — processing continues without errors. Formats that fail at runtime are excluded from `expected_derivative_names` so processing can still complete.
 
 Use JPEG/PNG derivatives (`:social_og`) for meta tags; use WebP/AVIF in `<picture>` elements on the front end.
+
+### Runtime dependencies
+
+| Package | Required for |
+|---------|----------------|
+| `libvips` (+ dev headers) | All image processing |
+| `libwebp` | WebP output (often bundled with libvips) |
+| `libavif`, `libheif` | AVIF output |
+
+**Debian/Ubuntu example:**
+
+```bash
+apt-get install -y libvips libvips-dev libwebp-dev libavif-dev libheif-dev
+```
+
+**Docker example:**
+
+```dockerfile
+RUN apt-get install -y libvips libvips-dev libwebp-dev libavif-dev libheif-dev
+```
+
+If AVIF encoding is unavailable, set `config.modern_formats = [:webp]` until AVIF libraries are installed.
 
 ## ActiveAdmin menu customization
 
