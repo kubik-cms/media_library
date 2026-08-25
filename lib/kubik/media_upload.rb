@@ -172,8 +172,8 @@ module Kubik
     end
 
 
-    include Kubik::MediaImageUploader[:image] rescue NameError
-    include Kubik::MediaFileUploader[:file] rescue NameError
+    include Kubik::MediaImageUploader[:image]
+    include Kubik::MediaFileUploader[:file]
 
     validates_presence_of :image, if: Proc.new { |u| u.file.blank? }
     validates_presence_of :file, if: Proc.new { |u| u.image.blank? }

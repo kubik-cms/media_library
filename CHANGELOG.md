@@ -1,5 +1,16 @@
 ## [Unreleased]
 
+## [0.2.4] - 2026-08-25
+
+### Fixed
+
+- Remove `ActiveSupport.on_load(:active_record)` from `lib/kubik/media_library.rb` so models load only in engine `to_prepare` (after uploaders are available)
+- Remove `rescue NameError` from Shrine uploader includes on `Kubik::MediaUpload` so missing uploaders fail loudly at boot
+
+### Added
+
+- Boot test asserting `Kubik::MediaUpload` has Shrine image/file attachments after application load
+
 ## [0.2.3] - 2026-08-25
 
 ### Fixed

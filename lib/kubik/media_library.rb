@@ -10,7 +10,3 @@ module Kubik
     require "kubik/media_upload"
   end
 end
-
-ActiveSupport.on_load(:active_record) do
-  Kubik.register_models!
-end
