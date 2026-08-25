@@ -1,7 +1,7 @@
 require 'image_processing/mini_magick'
 
 module Kubik
-  class MediaUpload < ::ApplicationRecord
+  class MediaUpload < ActiveRecord::Base
     self.table_name = 'kubik_media_uploads'
     DROP_AREA_TEXT = 'Maximum size 10Mb | .jpeg, .jpg, .png and .pdf files only'
 

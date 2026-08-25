@@ -1,4 +1,16 @@
+# frozen_string_literal: true
+
 module Kubik
-  require "kubik/upload"
-  require "kubik/media_upload"
+  module_function
+
+  def register_models!
+    return if defined?(Kubik::MediaUpload)
+
+    require "kubik/upload"
+    require "kubik/media_upload"
+  end
+end
+
+ActiveSupport.on_load(:active_record) do
+  Kubik.register_models!
 end

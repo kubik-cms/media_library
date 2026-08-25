@@ -7,12 +7,12 @@ require "acts_as_list"
 require "image_optim"
 require "shrine"
 require "kubik/uploadable"
+require "kubik/media_library"
 require "kubik/derivatives_resolver"
 require "kubik/derivatives_completion"
 require "kubik/processing/format_support"
 require "kubik/processing/adapter"
 require "kubik/processing/vips_adapter"
-require "kubik_media_library/active_admin/registration"
 
 # Optional dependencies
 begin
@@ -51,14 +51,17 @@ module KubikMediaLibrary
 
       initializer :kubik_media_library_active_admin do |app|
         lib_root = File.dirname(__FILE__)
-        ActiveAdmin.application.load_paths += Dir[File.join(lib_root, 'arbre')]
-        ActiveAdmin.application.load_paths += Dir[File.join(lib_root, 'active_admin', 'views')]
+        ::ActiveAdmin.application.load_paths += Dir[File.join(lib_root, 'arbre')]
+        ::ActiveAdmin.application.load_paths += Dir[File.join(lib_root, 'active_admin', 'views')]
 
         app.config.to_prepare do
+          require "kubik_media_library/active_admin/registration"
+
+          Kubik.register_models! unless defined?(Kubik::MediaUpload)
           next unless KubikMediaLibrary.config.auto_register_active_admin
 
           begin
-            ActiveAdmin.unregister Kubik::MediaUpload
+            ::ActiveAdmin.unregister Kubik::MediaUpload
           rescue NameError, NoMethodError
             # Resource not registered yet
           end

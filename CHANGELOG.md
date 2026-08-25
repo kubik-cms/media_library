@@ -1,5 +1,13 @@
 ## [Unreleased]
 
+## [0.2.2] - 2026-08-25
+
+### Fixed
+
+- Use `::ActiveAdmin` in engine initializer (avoids lookup under `KubikMediaLibrary::ActiveAdmin` with `isolate_namespace`)
+- Defer loading `Kubik::Upload` and `Kubik::MediaUpload` until `to_prepare` / registration (not during `Bundler.require`)
+- Inherit models from `ActiveRecord::Base` instead of `ApplicationRecord` (host `ApplicationRecord` is not available at gem load time)
+
 ## [0.2.1] - 2026-08-25
 
 ### Fixed

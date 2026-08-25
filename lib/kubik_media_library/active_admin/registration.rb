@@ -1,13 +1,13 @@
 # frozen_string_literal: true
 
-require_relative '../../kubik/media_library'
-
 module KubikMediaLibrary
   module ActiveAdmin
     module Registration
       module_function
 
       def register_media_upload!(&block)
+        Kubik.register_models! unless defined?(Kubik::MediaUpload)
+
         ::ActiveAdmin.register Kubik::MediaUpload do
           menu(**KubikMediaLibrary.config.active_admin_menu)
           actions :all, except: %i[new show]
