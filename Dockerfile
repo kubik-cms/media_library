@@ -22,7 +22,9 @@ RUN apt-get install -y \
             libv8-dev \
             libvips \
             libvips-dev \
-            libvips-tools
+            libvips-tools \
+            libavif-dev \
+            libheif-dev
 RUN mkdir /kubik_metatagable
 RUN mkdir -p /vendor/bundle
 

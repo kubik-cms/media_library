@@ -100,6 +100,26 @@ module Kubik
           type: :limit, options: [400, nil]
         }
       },
+      social: {
+        social_og: {
+          type: :fill, options: [1200, 630, { crop: :attention }]
+        },
+        social_twitter_large: {
+          type: :fill, options: [1200, 675, { crop: :attention }]
+        },
+        social_twitter_small: {
+          type: :fill, options: [800, 418, { crop: :attention }]
+        },
+        social_linkedin: {
+          type: :fill, options: [1200, 627, { crop: :attention }]
+        },
+        social_pinterest: {
+          type: :fill, options: [1000, 1500, { crop: :attention }]
+        },
+        social_square: {
+          type: :fill, options: [1080, 1080, { crop: :attention }]
+        }
+      },
       thumb: {
         thumb_800x800: {
           type: :pad, options: [800, 800, { extend: :white }]
@@ -111,7 +131,9 @@ module Kubik
           type: :pad, options: [200, 200, { extend: :white }]
         }
       }
-    }
+    }.freeze
+
+    REQUIRED_THUMB_DERIVATIVES = DEFAULT_IMAGE_DERIVATIVES[:thumb].freeze
 
     include AASM
     aasm do
@@ -165,13 +187,45 @@ module Kubik
     end)
 
     def self.available_derivatives
-      Kubik::MediaUpload::DEFAULT_IMAGE_DERIVATIVES.merge(
-        Kubik::MediaUpload.additional_derivatives
+      Kubik::DerivativesResolver.resolve(
+        defaults: DEFAULT_IMAGE_DERIVATIVES,
+        image_derivatives: KubikMediaLibrary.config.image_derivatives,
+        override_derivatives: KubikMediaLibrary.config.override_derivatives,
+        additional_derivatives: KubikMediaLibrary.config.additional_derivatives,
+        legacy_additional_derivatives: legacy_additional_derivatives,
+        excluded_derivatives: KubikMediaLibrary.config.excluded_derivatives,
+        required_thumbs: REQUIRED_THUMB_DERIVATIVES
       )
     end
 
+    def self.base_derivative_names
+      available_derivatives.each_with_object([]) do |(_group, derivatives), names|
+        derivatives.each_key { |name| names << name }
+      end
+    end
+
+    def self.expected_derivative_names
+      names = [:optimised] + base_derivative_names
+
+      KubikMediaLibrary.processor.available_modern_formats.each do |format|
+        base_derivative_names.each do |base_name|
+          names << :"#{base_name}_#{format}"
+        end
+      end
+
+      names.uniq
+    end
+
     def self.derivatives_number
-      Kubik::MediaUpload.available_derivatives.map { |a| a[1].length }.sum + 1
+      expected_derivative_names.size
+    end
+
+    def derivatives_complete?
+      return false unless image_data.present?
+
+      expected = self.class.expected_derivative_names.map(&:to_sym)
+      present = image_attacher.derivatives.keys.map(&:to_sym)
+      (expected - present).empty?
     end
 
     def process_thumbnails
@@ -206,6 +260,10 @@ module Kubik
       {}
     end
 
+    def self.legacy_additional_derivatives
+      additional_derivatives
+    end
+
 
     def crop(x, y, w, h)
       return if (x || y || w || h).nil?
@@ -215,12 +273,21 @@ module Kubik
       ImageProcessing::MiniMagick.source(full_path)
                                  .crop("#{w}x#{h}+#{x}+#{y}")
                                  .call(destination: full_path)
-      update(image: self.image[:original]) # reprocess all images
+      update(image: self.image[:original])
+      regenerate_derivatives!
     end
 
+    def regenerate_derivatives!
+      return unless image_data.present?
 
-    def add_new_derivatives(key)
-      ResizeImagesJob.perform_later(self, key)
+      image_attacher.derivatives.each_key do |key|
+        next if key == :original
+
+        image_attacher.delete_derivative(key)
+      end
+      image_attacher.atomic_persist
+      update_column(:aasm_state, 'uploaded')
+      process!
     end
 
     def generate_thumbnails

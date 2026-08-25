@@ -9,6 +9,7 @@ module Kubik
     FALLBACK_PATH ='/image_fallback/fallback.svg'
     ALLOWED_TYPES = %w[image/gif image/jpg image/jpeg image/png image/svg+xml image/svg].freeze
     MAX_SIZE      = 10 * 1024 * 1024 # 10 MB
+    MODERN_FORMAT_SUFFIXES = %w[webp avif].freeze
 
     plugin :store_dimensions
     plugin :derivatives
@@ -22,11 +23,17 @@ module Kubik
     end
 
     Attacher.default_url do |derivative: nil, **|
-      if derivative
-        fallback = derivatives[:optimised]&.url
-        fallback = file&.url unless fallback.present?
+      next unless derivative
+
+      sym = derivative.to_sym
+      return derivatives[sym].url if derivatives[sym]
+
+      if (match = sym.to_s.match(/\A(.+)_(webp|avif)\z/))
+        base = match[1].to_sym
+        return derivatives[base].url if derivatives[base]
       end
-      fallback
+
+      derivatives[:optimised]&.url || file&.url
     end
 
     def generate_location(io, **context)
@@ -34,13 +41,18 @@ module Kubik
       version = context[:derivative]
       is_original = version.nil? || version == :original
 
-      # Save original image
       if is_original
         return path + context[:metadata]['filename'].tr(' ', '_')
       end
 
-      # Handle derivatives
       orig_filename = context[:record].image_data['metadata']['filename']
+      base_name = File.basename(orig_filename, '.*')
+
+      if (match = version.to_s.match(/\A(.+)_(webp|avif)\z/))
+        filename = "#{version}-#{base_name}.#{match[2]}"
+        return path + filename
+      end
+
       filename = "#{version}-#{orig_filename.tr(' ', '_')}"
       path + filename
     end

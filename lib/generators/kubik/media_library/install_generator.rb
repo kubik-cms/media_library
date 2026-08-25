@@ -16,6 +16,11 @@ module Kubik
 
         def copy_initializers
           copy_file 'config/initializers/shrine.rb', 'config/initializers/shrine.rb'
+          copy_file 'config/initializers/kubik_media_library.rb', 'config/initializers/kubik_media_library.rb'
+        end
+
+        def copy_admin_template
+          copy_file 'app/admin/kubik_media_uploads.rb', 'app/admin/kubik_media_uploads.example.rb'
         end
       end
     end

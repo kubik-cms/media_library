@@ -1,76 +1,208 @@
 # KubikMediaLibrary
 
+Media library for Kubik CMS — ActiveAdmin gallery, Shrine uploads, configurable image derivatives, and optional modern format outputs.
+
 ## Installation
 
 Add this line to your application's Gemfile:
 
 ```ruby
-gem 'kubik_media_library', github: 'kubik-inc/media_library'
+gem 'kubik_media_library', github: 'primate-inc/kubik_media_library'
 ```
 
-And then execute:
+Then:
 
 ```bash
 bundle install
 rails g kubik:media_library:install
 ```
 
-## Optional Dependencies
+The install generator adds database migrations, Shrine initializer, and `config/initializers/kubik_media_library.rb`.
 
-This gem supports optional dependencies that can be added to your application for enhanced functionality. These are not declared in the gemspec to avoid forcing them on all users.
+## Usage
+
+```ruby
+class Blog < ApplicationRecord
+  include Kubik::Uploadable
+
+  has_one_kubik_upload(self, :header_image)
+  has_many_kubik_uploads(self, :gallery)
+end
+```
+
+Validate presence of attachments:
+
+```ruby
+has_one_kubik_upload(self, :header_image, { validate_presence: true })
+```
+
+Reference derivatives in views:
+
+```ruby
+blog.header_image.image_url(:thumb_200x200)
+blog.header_image.image_url(:social_og)
+blog.header_image.image_url(:square_800_webp)
+```
+
+If a derivative does not exist yet (e.g. legacy uploads before a new size was added), Shrine falls back to `:optimised`, then the original file.
+
+## Image derivatives
+
+### Default groups
+
+| Group | Purpose |
+|-------|---------|
+| `square` | Square crops at multiple sizes |
+| `landscape` | Landscape crops |
+| `portrait` | Portrait crops |
+| `panoramic` | Panoramic crops |
+| `content` | Width-limited images |
+| `social` | Meta tag sizes (`social_og`, `social_twitter_large`, etc.) |
+| `thumb` | Admin UI thumbnails (required, always generated) |
+
+Social sizes included by default:
+
+| Derivative | Size | Use case |
+|------------|------|----------|
+| `social_og` | 1200×630 | Open Graph / Facebook / LinkedIn |
+| `social_twitter_large` | 1200×675 | X large card |
+| `social_twitter_small` | 800×418 | X summary card |
+| `social_linkedin` | 1200×627 | LinkedIn |
+| `social_pinterest` | 1000×1500 | Pinterest |
+| `social_square` | 1080×1080 | Square previews |
+
+### Configuration
+
+```ruby
+# config/initializers/kubik_media_library.rb
+KubikMediaLibrary.configure do |config|
+  # Add derivatives
+  config.additional_derivatives = {
+    custom: { hero_2000: { type: :limit, options: [2000, nil] } }
+  }
+
+  # Override specific defaults
+  config.override_derivatives = {
+    square: { square_800: { type: :fill, options: [900, 900, { crop: :attention }] } }
+  }
+
+  # Remove derivatives (thumb_* keys are always kept)
+  config.excluded_derivatives = [:panoramic_400]
+
+  # Replace entire derivative set
+  # config.image_derivatives = { ... }
+
+  # Modern formats (WebP / AVIF) alongside JPEG/PNG
+  config.modern_formats = [:webp, :avif]
+  config.modern_format_quality = { webp: 80, avif: 65 }
+
+  # Processing adapter (default: Kubik::Processing::VipsAdapter)
+  # config.processor = Kubik::Processing::VipsAdapter.new
+end
+```
+
+**Required thumbnails:** `thumb_200x200`, `thumb_400x400`, and `thumb_800x800` are always generated for the admin UI. They cannot be excluded.
+
+Legacy class-reopen still works:
+
+```ruby
+class Kubik::MediaUpload
+  def self.additional_derivatives
+    { custom: { my_size: { type: :limit, options: [1600, nil] } } }
+  end
+end
+```
+
+### Regenerating derivatives
+
+Config changes are not retroactive. Regenerate from ActiveAdmin:
+
+- **Index** — "Regenerate all" (collection action)
+- **Edit** — "Regenerate versions" (member action)
+
+Or in code:
+
+```ruby
+upload.regenerate_derivatives!
+```
+
+### Modern formats
+
+When enabled, each base derivative also generates `:_webp` and/or `:_avif` variants (e.g. `:square_800_webp`).
+
+If system libraries are missing, the gem logs a warning and skips that format — processing continues without errors.
+
+Optional system packages for AVIF: `libavif-dev`, `libheif-dev` (WebP is usually available with libvips).
+
+Use JPEG/PNG derivatives (`:social_og`) for meta tags; use WebP/AVIF in `<picture>` elements on the front end.
+
+## ActiveAdmin menu customization
+
+### Menu placement via initializer (recommended)
+
+```ruby
+KubikMediaLibrary.configure do |config|
+  config.active_admin_menu = {
+    label: 'Media Library',
+    priority: 5,
+    parent: 'Content'
+  }
+  config.active_admin_per_page = 25
+end
+```
+
+All standard ActiveAdmin `menu` options are supported (`:label`, `:priority`, `:parent`, `:if`, `:id`).
+
+### Extending the resource
+
+```ruby
+KubikMediaLibrary.configure do |config|
+  config.active_admin_customize do |dsl|
+    dsl.action_item :my_action, only: :index do
+      link_to 'My Action', '#'
+    end
+  end
+end
+```
+
+### Full host-app control
+
+```ruby
+KubikMediaLibrary.configure do |config|
+  config.auto_register_active_admin = false
+end
+```
+
+```ruby
+# app/admin/kubik_media_uploads.rb
+KubikMediaLibrary::ActiveAdmin::Registration.register_media_upload! do
+  menu parent: 'Site', priority: 3, label: 'Assets'
+end
+```
+
+Views can be overridden in `app/views/admin/kubik_media_uploads/`.
+
+## Optional Dependencies
 
 ### kubik_wysiwyg
 
-The `kubik_wysiwyg` gem is an optional dependency that provides WYSIWYG editor integration. To use it, add it to your Gemfile:
-
 ```ruby
-# Add this to your application's Gemfile
 gem 'kubik_wysiwyg'
 ```
-
-The gem will automatically detect if `kubik_wysiwyg` is available and enable WYSIWYG features accordingly. You can check if the WYSIWYG functionality is available in your code:
 
 ```ruby
 if KubikMediaLibrary.wysiwyg_available?
   # WYSIWYG features are available
-else
-  # WYSIWYG features are not available
 end
-```
-
-## Usage
-
-You can quickly add the ability to add media library attachments and attach them to instances of models in your application
-
-```ruby
-class Blog < ApplicationRecord
-  include include Kubik::Uploadable
-  has_one_kubik_upload(self, :header_image)
-  has_many_kubik_uploads(self, :gallery)
-  ...
-end
-```
-
-By default uplodable doesn't validate presence of attachments.
-
-```ruby
-  has_one_kubik_upload(self, :header_image, { validate_presence: true })
 ```
 
 ## Development
 
-After checking out the repo, run `bin/setup` to install dependencies. Then, run `rake test` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
-
-To install this gem onto your local machine, run `bundle exec rake install`. To release a new version, update the version number in `version.rb`, and then run `bundle exec rake release`, which will create a git tag for the version, push git commits and the created tag, and push the `.gem` file to [rubygems.org](https://rubygems.org).
-
-## Contributing
-
-Bug reports and pull requests are welcome on GitHub at https://github.com/[USERNAME]/kubik_previewable. This project is intended to be a safe, welcoming space for collaboration, and contributors are expected to adhere to the [code of conduct](https://github.com/primate-inc/kubik_previewable/blob/master/CODE_OF_CONDUCT.md).
+```bash
+bin/setup
+rake test
+```
 
 ## License
 
-The gem is available as open source under the terms of the [MIT License](https://opensource.org/licenses/MIT).
-
-## Code of Conduct
-
-Everyone interacting in the KubikPreviewable project's codebases, issue trackers, chat rooms and mailing lists is expected to follow the [code of conduct](https://github.com/primate-inc/kubik_previewable/blob/master/CODE_OF_CONDUCT.md).
+MIT
