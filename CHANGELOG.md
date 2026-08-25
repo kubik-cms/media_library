@@ -1,5 +1,11 @@
 ## [Unreleased]
 
+## [0.2.5] - 2026-08-25
+
+### Fixed
+
+- Use Shrine `remove_derivative(key, delete: true)` instead of non-existent `delete_derivative` in `regenerate_derivatives!`
+
 ## [0.2.4] - 2026-08-25
 
 ### Fixed

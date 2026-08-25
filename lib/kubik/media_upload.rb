@@ -283,7 +283,7 @@ module Kubik
       image_attacher.derivatives.each_key do |key|
         next if key == :original
 
-        image_attacher.delete_derivative(key)
+        image_attacher.remove_derivative(key, delete: true)
       end
       image_attacher.atomic_persist
       update_column(:aasm_state, 'uploaded')
