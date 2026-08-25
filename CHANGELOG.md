@@ -1,5 +1,12 @@
 ## [Unreleased]
 
+## [0.2.1] - 2026-08-25
+
+### Fixed
+
+- Correct `require_relative` path in ActiveAdmin registration (`../../kubik/media_library`)
+- Use `::ApplicationRecord` for `Kubik::MediaUpload` and `Kubik::Upload` so host apps do not need `Kubik::ApplicationRecord`
+
 ## [0.2.0] - 2026-08-25
 
 ### Added

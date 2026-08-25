@@ -2,7 +2,7 @@
 
 module Kubik
   # Upload class
-  class Upload < ApplicationRecord
+  class Upload < ::ApplicationRecord
     self.table_name = 'kubik_uploads'
 
     after_save :delete_if_no_kubik_media_upload_id

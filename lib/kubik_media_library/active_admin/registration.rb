@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require_relative '../kubik/media_library'
+require_relative '../../kubik/media_library'
 
 module KubikMediaLibrary
   module ActiveAdmin
