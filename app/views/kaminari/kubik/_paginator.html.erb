@@ -7,6 +7,14 @@
     paginator:     the paginator that renders the pagination tags inside
 -%>
 <% @turbo_action = turbo_action.present? ? turbo_action : false %>
+<% @pagination_turbo_data =
+     if @media_gallery_turbo_frame.present?
+       { turbo: true, turbo_frame: @media_gallery_turbo_frame }
+     elsif @turbo_action.present?
+       { turbo: true, turbo_action: @turbo_action }
+     else
+       {}
+     end %>
 <%= paginator.render do -%>
   <nav class="pagination" role="navigation" aria-label="pager">
     <%= first_page_tag unless current_page.first? %>

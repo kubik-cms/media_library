@@ -1,0 +1,68 @@
+// Read-only public URL field with copy action — matches Kubik formtastic string inputs.
+.kubik-copy-link-button {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 0.5rem;
+  margin: 0;
+  border: 0;
+  border-radius: var(--kubik-interface-radius-100, 0.2rem);
+  background: transparent;
+  color: var(--kubik-interface-color-grey-500);
+  cursor: pointer;
+  line-height: 1;
+  transition: color 0.2s ease;
+
+  &:hover,
+  &:focus-visible {
+    color: var(--kubik-interface-color-brand-400);
+    outline: none;
+  }
+
+  .material-symbols-outlined {
+    font-size: 1.125rem;
+  }
+}
+
+.kubik-copy-media-url-field {
+  display: flex;
+  align-items: center;
+
+  &:not(.kubik-copy-media-url-field--legend) {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  > .label {
+    @include kubik-form-label;
+    display: block;
+    margin-bottom: 0.25rem;
+  }
+
+  &__control {
+    display: flex;
+    align-items: stretch;
+    gap: 0.35rem;
+    flex: 1;
+    min-width: 0;
+  }
+
+  &__input {
+    @include kubik-form-input-text;
+    flex: 1;
+    min-width: 0;
+    margin-bottom: 0;
+  }
+
+  &__copy {
+    @extend .kubik-copy-link-button;
+    align-self: stretch;
+  }
+
+  &__feedback {
+    @include kubik-form-hint;
+    margin-top: 0.15rem;
+    margin-bottom: 0;
+  }
+}

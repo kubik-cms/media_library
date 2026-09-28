@@ -1,0 +1,7 @@
+<%# locals: label:, url: %>
+<% absolute_url = kubik_media_absolute_url(url) %>
+<span class="kubik-media-version-line">
+  <%= link_to label, url %>
+  <span class="kubik-media-version-line__url">- <%= absolute_url %></span>
+  <%= render "copy_media_link_icon", url: url %>
+</span>

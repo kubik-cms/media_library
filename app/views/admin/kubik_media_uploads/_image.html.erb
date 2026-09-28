@@ -5,17 +5,21 @@
       <div class='status_marker'></div>
     <% end %>
     </div>
-    <%= link_to('delete',
-                admin_kubik_media_upload_path(image),
-                class: 'material-symbols-outlined kubik-media-gallery--media_item_container--icon',
-                method: :delete, data: { confirm: 'Are you sure?' }) %>
+    <div class="kubik-media-gallery--media_item_container--actions">
+      <%= render "copy_media_link_icon", url: image.public_media_url %>
+      <%= link_to('delete',
+                  admin_kubik_media_upload_path(image),
+                  class: 'material-symbols-outlined kubik-media-gallery--media_item_container--icon',
+                  method: :delete, data: { confirm: 'Are you sure?' }) %>
+    </div>
   </div>
   <% file = image.image.present? ? image.image : image.file %>
   <% mime_type = file.metadata['mime_type'] %>
   <% file_type = Hash[ [:type, :format].zip(mime_type.split("/")) ] %>
   <%= render 'image_preview', image: image, file: file, mime_type: mime_type, file_type: file_type, modal: modal %>
   <div class='kubik-media-gallery--media_item_container--title'>
-    <%= file.metadata['filename'] %>
+    <%= image.gallery_display_name %>
   </div>
+  <%= render "media_item_tags", upload: image %>
 <% end %>
 

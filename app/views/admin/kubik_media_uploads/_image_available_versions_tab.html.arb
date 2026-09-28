@@ -1,25 +1,22 @@
 attributes_table_for image.object do
   row 'Original' do
-    [link_to('Original ', image.object.image_url), "- #{image.object.image_url}" ].join(' ').html_safe
+    render(
+      partial: "admin/kubik_media_uploads/media_version_line",
+      locals: { label: "Original", url: image.object.image_url }
+    )
   end
   row 'Optimised' do
-    [link_to("Optimised", image.object.image_url(:optimised)), "- #{image.object.image_url(:optimised)}"].join(' ').html_safe
+    render(
+      partial: "admin/kubik_media_uploads/media_version_line",
+      locals: { label: "Optimised", url: image.object.image_url(:optimised) }
+    )
   end
   Kubik::MediaUpload.available_derivatives.each do |group, crops|
     row group.to_s.humanize do
-      crops.map do |crop|
-        derivative_rows = [[crop[0], crop[0].to_s.humanize]]
-        KubikMediaLibrary.processor.available_modern_formats.each do |format|
-          derivative_rows << [:"#{crop[0]}_#{format}", "#{crop[0].to_s.humanize} (#{format.upcase})"]
-        end
-
-        derivative_rows.map do |derivative, label|
-          div [
-            link_to(label, image.object.image_url(derivative)),
-            "- #{image.object.image_url(derivative)}"
-          ]
-        end
-      end.join(' ').html_safe
+      render(
+        partial: "admin/kubik_media_uploads/media_version_lines_group",
+        locals: { crops: crops, upload: image.object }
+      )
     end
   end
 end

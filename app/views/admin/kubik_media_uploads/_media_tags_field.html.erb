@@ -1,0 +1,20 @@
+<% if KubikMediaLibrary.tagging_available? %>
+  <% field_name = "#{image.object_name}[media_tag_list]" %>
+  <% field_id = "#{image.object_name}_media_tag_list" %>
+  <% if kubik_tags_field_available? %>
+    <%= render_kubik_tags_field(
+          field_name: field_name,
+          field_id: field_id,
+          value: image.object.media_tag_list.to_s,
+          hint: "Comma-separated labels (e.g. hero, brochure, 2024)",
+          suggestions_url: tag_suggestions_admin_kubik_media_uploads_path,
+          value_format: :string,
+          multiselect: true,
+          allow_create: true
+        ) %>
+  <% else %>
+    <%= image.input :media_tag_list,
+                    label: "Tags",
+                    hint: "Comma-separated labels (e.g. hero, brochure, 2024)" %>
+  <% end %>
+<% end %>

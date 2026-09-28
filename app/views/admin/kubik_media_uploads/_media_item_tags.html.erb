@@ -1,0 +1,8 @@
+<% if KubikMediaLibrary.tagging_available? && upload.media_tag_list.any? %>
+  <%= render partial: "/kubik/interface_elements/tag_list",
+             locals: {
+               tags: upload.media_tag_list,
+               limit: 2,
+               wrapper_class: "kubik-media-gallery--media_item_container--tags"
+             } %>
+<% end %>

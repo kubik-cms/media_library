@@ -1,0 +1,29 @@
+name: JavaScript
+
+on:
+  push:
+    paths:
+      - "package/**"
+      - ".github/workflows/javascript.yml"
+  pull_request:
+    paths:
+      - "package/**"
+      - ".github/workflows/javascript.yml"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: package
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: yarn
+          cache-dependency-path: package/yarn.lock
+
+      - run: yarn install --frozen-lockfile
+      - run: yarn build

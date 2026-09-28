@@ -27,6 +27,7 @@ Gem::Specification.new do |spec|
 
   spec.add_dependency "aasm", ">= 4.12"
   spec.add_dependency "activeadmin", ">= 2.13"
+  spec.add_dependency "acts-as-taggable-on", ">= 10.0"
   spec.add_dependency "acts_as_list"
   spec.add_dependency "image_processing", "~> 1.12"
   spec.add_dependency "image_optim"

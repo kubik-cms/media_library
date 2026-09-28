@@ -37,6 +37,15 @@ module KubikMediaLibrary
       end.join(', ')
     end
 
+    def kubik_media_absolute_url(url, host: nil)
+      base = host
+      if base.blank? && respond_to?(:request) && request.present?
+        base = request.base_url
+      end
+
+      KubikMediaLibrary::PublicUrl.absolute(url, host: base)
+    end
+
     def kubik_picture_tag(upload, default_key:, srcset: nil, sizes: nil, prefer_modern: true, format: :auto, **img_options)
       upload = resolve_kubik_upload(upload)
       return ''.html_safe unless upload&.image_data.present?

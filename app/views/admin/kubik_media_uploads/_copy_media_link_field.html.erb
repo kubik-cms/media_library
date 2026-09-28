@@ -1,0 +1,35 @@
+<% absolute_url = kubik_media_absolute_url(url) %>
+<% legend_variant = local_assigns[:variant] == :legend %>
+<div class="kubik-copy-media-url-field<%= " kubik-copy-media-url-field--legend" if legend_variant %>"
+     data-controller="copy-media-link"
+     data-copy-media-link-url-value="<%= absolute_url %>">
+  <% unless legend_variant %>
+    <label class="label"><%= local_assigns.fetch(:label, "Public URL") %></label>
+    <div class="kubik-copy-media-url-field__control">
+      <input type="text"
+             readonly
+             value="<%= absolute_url %>"
+             class="kubik-copy-media-url-field__input"
+             data-copy-media-link-target="input"
+             data-action="focus->copy-media-link#select">
+      <button type="button"
+              class="kubik-copy-media-url-field__copy"
+              data-action="copy-media-link#copy"
+              title="Copy link"
+              aria-label="Copy link">
+        <span class="material-symbols-outlined" aria-hidden="true">content_copy</span>
+      </button>
+    </div>
+  <% else %>
+    <button type="button"
+            class="kubik-copy-media-url-field__copy"
+            data-action="copy-media-link#copy"
+            title="Copy link"
+            aria-label="Copy link">
+      <span class="material-symbols-outlined" aria-hidden="true">content_copy</span>
+    </button>
+  <% end %>
+  <p class="kubik-copy-media-url-field__feedback"
+     data-copy-media-link-target="feedback"
+     hidden>Copied to clipboard.</p>
+</div>

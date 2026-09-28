@@ -1,60 +1,90 @@
+// Filter bar styles live in the host app (or kubik_interface_elements gem):
+// kubik_interface_elements/_filters_and_tags.scss — class .kubik-interface-filters
+
+.kubik-media-gallery-filters__empty {
+  @include kubik-typography-para--small;
+  width: 100%;
+  padding: 2rem 1rem;
+  text-align: center;
+  color: var(--kubik-interface-color-grey-700, #444);
+}
+
+#media_gallery_results,
+turbo-frame#media_gallery_results,
 #media_frame {
   display: flex;
   flex-direction: column;
+  align-self: stretch;
+  justify-self: stretch;
+  min-height: 0;
+  width: 100%;
   overflow: hidden;
+  box-sizing: border-box;
+  padding: 0 0.5rem;
+
   #kubik-modal & .kubik-pagination {
     padding-left: 1rem;
     padding-right: 1rem;
     margin-bottom: 0;
   }
+
+  .kubik-media-library-listing {
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow-y: auto;
+    align-content: start;
+  }
+
+  .kubik-pagination,
+  #index_footer {
+    flex: 0 0 auto;
+  }
 }
-#media_list {
-  display: flex;
-  flex-direction: row;
-  flex-wrap: wrap;
+#media_list,
+.kubik-media-library-listing {
+  display: grid;
+  grid-template-columns: repeat(
+    auto-fill,
+    minmax(min(250px, calc((100% - 1rem) / 2)), 1fr)
+  );
+  align-content: start;
+  justify-items: stretch;
+  gap: 1rem;
   margin-bottom: 1rem;
+  padding: 0.5rem 0 0;
+  box-sizing: border-box;
+
+  @media (max-width: 549px) {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
   .kubik-media-gallery--media_item_container {
-    height: calc(100vw - 48px - 1rem);
-    margin: .5rem;
-    @media (min-width: 550px) {
-      flex: 1 1 33%;
-      height: calc(55vw - 48px - 2rem);
-    }
-    @media (min-width: 48em) {
-      flex: 1 1 25%;
-      height: calc(40vw - 48px - 2rem);
-    }
-    @media (min-width: 75em) {
-      flex: 1 1 30%;
-      height: calc((100vw - 288px - 2rem)/3);
-      max-width: calc((100vw - 288px - 2rem)/3);
-    }
-    @media (min-width: 100em) {
-      flex: 1 1 20%;
-      height: calc((100vw - 288px - 2rem)/4);
-      max-width: 250px;
-      height: 250px;
-    }
-    &__small {
+    box-sizing: border-box;
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    aspect-ratio: 1 / 1;
+    margin: 0;
+
+    @media (max-width: 549px) {
       height: 180px;
-      width: 180px;
-      @media (min-width: 550px) {
-        flex: 1 1 180px;
-        height: 180px;
-      }
-      @media (min-width: 48em) {
-        flex: 1 1 180px;
-        height: 180px;
-      }
-      @media (min-width: 75em) {
-        flex: 1 1 180px;
-        height: 180px;
-      }
-      @media (min-width: 100em) {
-        flex: 1 1 180px;
-        height: 180px;
-      }
+      aspect-ratio: auto;
     }
+
+    &__small {
+      width: 180px;
+      height: 180px;
+      max-width: 180px;
+      justify-self: start;
+    }
+  }
+}
+
+.admin_kubik_media_uploads.index {
+  #active_admin_content {
+    display: flex;
+    flex-direction: column;
+    min-height: calc(100vh - 12rem);
   }
 }
 
@@ -62,14 +92,59 @@
   display: flex;
   flex-direction: column;
   flex-wrap: wrap;
-  justify-content: space-between;
+  justify-content: flex-start;
+  flex: 1;
+  min-height: 0;
+}
+
+.media-library-listing-container {
+  display: grid;
+  grid-template-rows: auto auto 1fr;
+  gap: 0.75rem;
+  width: 100%;
+  min-height: 0;
+  flex: 1;
+  align-content: start;
+
+  &__upload {
+    grid-row: 1;
+    align-self: start;
+    box-sizing: border-box;
+    width: 100%;
+    padding: 0 0.5rem;
+    min-width: 0;
+  }
+
+  > form.kubik-interface-filters,
+  .kubik-interface-filters {
+    grid-row: 2;
+    align-self: start;
+    justify-self: stretch;
+    width: calc(100% - 1rem);
+    margin: 0 0.5rem;
+    box-sizing: border-box;
+
+    &.kubik-interface-filters--compact {
+      margin-left: 0.5rem;
+      margin-right: 0.5rem;
+      margin-bottom: 0;
+    }
+  }
+
+  turbo-frame#media_gallery_results,
+  #media_gallery_results {
+    grid-row: 3;
+  }
 }
 .kubik-modal-element-content {
   background-color: var(--kubik-interface-color-grey-100);
 }
 .kubik-pagination {
   @include kubik-typography-para--small;
-  margin-bottom: var(--kubik-interface-space-100); padding-left: var(--kubik-interface-space-350);
+  margin-bottom: var(--kubik-interface-space-100);
+  padding-left: calc(var(--kubik-interface-space-350, 1rem) + 0.5rem);
+  padding-right: 0.5rem;
+  box-sizing: border-box;
   .page {
     color: var(--kubik-interface-color-brand-400);
     margin-right: var(--kubik-interface-space-050);

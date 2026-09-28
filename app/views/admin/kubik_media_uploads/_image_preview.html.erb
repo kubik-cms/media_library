@@ -1,12 +1,24 @@
+<% edit_path = edit_admin_kubik_media_upload_path(image) %>
+<% tile_link_options = {
+  class: "kubik-media-gallery--media_item_container--tile-link",
+  data: { turbo_frame: "_top", turbo: false },
+  aria: { label: "Edit #{image.gallery_display_name}" }
+} %>
 <div class="kubik-media-gallery--media_item_container--image media_type_<%= file_type[:format] %>">
   <% if file_type[:type] == 'image' %>
-    <%= link_to edit_admin_kubik_media_upload_path(image) do %>
+    <%= link_to edit_path, **tile_link_options do %>
       <%= image_tag image.admin_image_thumbnail %>
     <% end %>
+  <% elsif image.file_preview_available? %>
+    <%= link_to edit_path, **tile_link_options do %>
+      <%= image_tag image.admin_file_thumbnail %>
+    <% end %>
   <% else %>
-    <%= link_to edit_admin_kubik_media_upload_path(image), class: 'material-symbols-outlined material-icon' do %>
+    <%= link_to edit_path,
+                **tile_link_options.merge(
+                  class: "material-symbols-outlined material-icon #{tile_link_options[:class]}"
+                ) do %>
       <%= file_type[:format].include?('pdf') ? 'picture_as_pdf' : 'docs' %>
     <% end %>
   <% end %>
 </div>
-

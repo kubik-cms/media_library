@@ -1,0 +1,18 @@
+<% gallery_filter_params = local_assigns.fetch(:gallery_filter_params) { @gallery_filter_params || {} } %>
+<% turbo_action = local_assigns.fetch(:turbo_action) { false } %>
+<% modal = local_assigns.fetch(:modal) { false } %>
+<%= turbo_frame_tag "media_gallery_results", data: { turbo: true } do %>
+  <div id="media_list" class="kubik-media-library-listing">
+    <% if collection.blank? %>
+      <p id="kubik_media_gallery_empty" class="kubik-media-gallery-filters__empty">No media matches these filters.</p>
+    <% elsif modal %>
+      <%= render partial: "selectable_image", locals: { modal: modal }, collection: collection, as: :image %>
+    <% else %>
+      <%= render partial: "image", locals: { modal: modal }, collection: collection, as: :image %>
+    <% end %>
+  </div>
+  <div class="kubik-pagination" id="index_footer">
+    <% @media_gallery_turbo_frame = "media_gallery_results" %>
+    <%= paginate collection, theme: "kubik", turbo_action: turbo_action, params: gallery_filter_params %>
+  </div>
+<% end %>

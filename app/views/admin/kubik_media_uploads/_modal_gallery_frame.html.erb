@@ -1,0 +1,8 @@
+<%# Turbo frame root for the media picker modal (must match kubik-modal frame id). %>
+<%= turbo_frame_tag "kubik_media_library_modal_frame" do %>
+  <%= render "media_library_listing",
+             modal: modal,
+             turbo_action: turbo_action,
+             gallery_filter_params: gallery_filter_params,
+             collection: collection %>
+<% end %>

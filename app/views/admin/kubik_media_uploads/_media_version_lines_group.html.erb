@@ -1,0 +1,14 @@
+<%# locals: upload:, crops: %>
+<div class="kubik-media-version-lines">
+  <% crops.each_key do |crop_key| %>
+    <% derivative_rows = [[crop_key, crop_key.to_s.humanize]] %>
+    <% KubikMediaLibrary.processor.available_modern_formats.each do |format| %>
+      <% derivative_rows << [:"#{crop_key}_#{format}", "#{crop_key.to_s.humanize} (#{format.upcase})"] %>
+    <% end %>
+    <% derivative_rows.each do |derivative, label| %>
+      <div class="kubik-media-version-line-row">
+        <%= render "media_version_line", label: label, url: upload.image_url(derivative) %>
+      </div>
+    <% end %>
+  <% end %>
+</div>

@@ -95,12 +95,19 @@
 }
 
 #kubik-media-gallery--file_upload_form--container {
-  flex: 0 0 calc(100% - 1rem);
-  margin: .5rem;
+  flex: 0 0 auto;
+  width: 100%;
+  max-width: 100%;
+  margin: 0;
+  box-sizing: border-box;
+
   &.dropzone_ready {
+    min-height: 0;
+
     .kubik--dz-message {
       display: flex;
     }
+
     .media_upload_form {
       display: flex;
       flex-wrap: wrap;
@@ -108,11 +115,20 @@
       border: 0;
       font-family: 'Lato', sans-serif;
       background: transparent;
+      min-height: 0;
+      width: 100%;
+
+      &.dropzone {
+        min-height: 0;
+      }
+
       &.dz-drag-hover {
         border-color: transparent;
       }
+
       fieldset {
         &.inputs { display: none; }
+        &.actions { display: none; }
       }
     }
   }

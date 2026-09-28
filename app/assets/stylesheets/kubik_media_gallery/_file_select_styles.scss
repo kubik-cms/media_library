@@ -79,12 +79,12 @@
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
+  gap: 0.5rem;
   .kubik-media-gallery--media_item_container {
     flex: 0 0 204px;
     width: 204px;
     height: 204px;
-    margin-right: .5rem;
-    margin-bottom: .5rem;
+    margin: 0;
     .kubik-media-gallery--media_item_container--image {
       margin: 1rem 0;
     }
@@ -92,8 +92,7 @@
 }
 .kubik-image-placeholder .kubik-media-gallery--file_select_container {
   flex: 0 0 204px;
-  margin-right: .5rem;
-  margin-bottom: .5rem;
+  margin: 0;
   transition: border-color .15s;
   &:hover {
     border-color: var(--kubik-interface-color-brand-500);

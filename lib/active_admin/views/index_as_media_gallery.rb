@@ -40,10 +40,13 @@ module ActiveAdmin
           div class: 'status' do
             4.times { div class: 'status_marker' }
           end
-          text_node link_to('delete',
-                            admin_kubik_media_upload_path(image),
-                            class: 'material-symbols-outlined kubik-media-gallery--media_item_container--icon',
-                            method: :delete, data: { confirm: 'Are you sure?' })
+          div class: 'kubik-media-gallery--media_item_container--actions' do
+            render partial: 'copy_media_link_icon', locals: { url: image.public_media_url }
+            text_node link_to('delete',
+                              admin_kubik_media_upload_path(image),
+                              class: 'material-symbols-outlined kubik-media-gallery--media_item_container--icon',
+                              method: :delete, data: { confirm: 'Are you sure?' })
+          end
         end
       end
 
@@ -54,11 +57,15 @@ module ActiveAdmin
 
         div(class: "kubik-media-gallery--media_item_container--image media_type_#{file_type[:format]}") do
           if file_type[:type] == 'image'
-            link_to edit_admin_kubik_media_upload_path(image) do
+            link_to edit_admin_kubik_media_upload_path(image), data: { turbo_frame: '_top', turbo: false } do
               image_tag image.admin_image_thumbnail
             end
+          elsif image.file_preview_available?
+            link_to edit_admin_kubik_media_upload_path(image), data: { turbo_frame: '_top', turbo: false } do
+              image_tag image.admin_file_thumbnail
+            end
           else
-            link_to edit_admin_kubik_media_upload_path(image), class: 'material-symbols-outlined material-icon' do
+            link_to edit_admin_kubik_media_upload_path(image), class: 'material-symbols-outlined material-icon', data: { turbo_frame: '_top', turbo: false } do
               file_type[:format].include?('pdf') ? 'picture_as_pdf' : 'docs'
             end
           end
@@ -66,9 +73,8 @@ module ActiveAdmin
       end
 
       def build_additional_info(image)
-        file = image.image.present? ? image.image : image.file
         div class: 'kubik-media-gallery--media_item_container--title' do
-          file.metadata['filename']
+          image.gallery_display_name
         end
       end
 
@@ -77,7 +83,10 @@ module ActiveAdmin
             id: 'kubik-media-gallery--file_upload_form--container',
             'data-controller': 'image_dropzone',
             'data-image_dropzone-text-value': 'Select a file',
-            'data-image_dropzone-turbo-value': Mime::Type.lookup_by_extension(:turbo_stream).present?) do
+            'data-image_dropzone-turbo-value': Mime::Type.lookup_by_extension(:turbo_stream).present?,
+            'data-image-dropzone-accepted-files-value': Kubik::MediaUpload.allowed_upload_info[:allowed_mime_types],
+            'data-image-dropzone-max-filesize-mb-value': Kubik::MediaUpload.allowed_upload_info[:max_filesize_mb]) do
+          render 'upload_dropzone_targets'
           render 'file_upload_form'
         end
       end

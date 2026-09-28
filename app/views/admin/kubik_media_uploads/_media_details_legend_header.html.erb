@@ -1,0 +1,12 @@
+<%# locals: title:, url:, upload: nil %>
+<div class="media_details_legend_header">
+  <div class="media_details_legend_title">
+    <span class="media_details_legend_title_text"><%= title %></span>
+    <%= render "copy_media_link_field", url: url, variant: :legend %>
+  </div>
+  <% if upload.present? && lookup_context.exists?("kubik_ai/admin/media_upload_ai_legend_trigger", [], true) %>
+    <div class="media_details_legend_actions">
+      <%= render "kubik_ai/admin/media_upload_ai_legend_trigger", upload: upload %>
+    </div>
+  <% end %>
+</div>

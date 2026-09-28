@@ -1,9 +1,89 @@
 #edit_media_upload {
+  fieldset.inputs > legend {
+    float: none;
+    width: 100%;
+    box-sizing: border-box;
+
+    > span {
+      display: block;
+      width: 100%;
+    }
+  }
+
+  .media_details_legend_header {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    width: 100%;
+  }
+
+  .media_details_legend_title {
+    display: inline-flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.1rem;
+    min-width: 0;
+    font-weight: inherit;
+  }
+
+  .media_details_legend_actions {
+    margin-left: auto;
+    flex-shrink: 0;
+  }
+
+  .media_details_legend_title_text {
+    font-weight: inherit;
+  }
+
   .media_image {
     width: 100%;
     padding: 0 0 0 1.5rem;
     margin-bottom: 1rem;
   }
+
+  .media_pdf_preview_container {
+    padding: 0 0 0 1.5rem;
+    margin-bottom: 1rem;
+  }
+
+  .media_pdf_preview_actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.75rem 1rem;
+    margin: 0.75rem 0 0;
+  }
+
+  .media_pdf_preview_panel {
+    margin-top: 1rem;
+  }
+
+  .media_pdf_preview {
+    width: 100%;
+    min-height: 480px;
+    border: 1px solid var(--kubik-interface-color-grey-200, #e6e6e6);
+    border-radius: 4px;
+    background: #fff;
+  }
+
+  .kubik-copy-media-url-field--legend {
+    position: relative;
+    flex: 0 0 auto;
+    margin-top: 0;
+
+    .kubik-copy-media-url-field__copy {
+      padding: 0 0.15rem;
+    }
+
+    .kubik-copy-media-url-field__feedback {
+      position: absolute;
+      top: 100%;
+      left: 0;
+      margin-top: 0.15rem;
+      white-space: nowrap;
+    }
+  }
+
   .version_details .panel_contents {
     .crop_group {
       display: flex;
@@ -28,6 +108,30 @@
   .version_details {
     h3 {
       @include kubik-typography-h3;
+    }
+
+    .kubik-media-version-line-row {
+      margin-bottom: 0.35rem;
+
+      &:last-child {
+        margin-bottom: 0;
+      }
+    }
+
+    .kubik-media-version-line {
+      display: inline-flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 0.35rem 0.5rem;
+
+      &__url {
+        color: var(--kubik-interface-color-grey-600);
+        word-break: break-all;
+      }
+
+      .kubik-copy-link-button {
+        flex-shrink: 0;
+      }
     }
   }
 

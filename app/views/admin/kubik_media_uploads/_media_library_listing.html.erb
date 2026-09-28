@@ -1,0 +1,24 @@
+<% turbo_action = local_assigns.fetch(:turbo_action) { false } %>
+<% modal = local_assigns.fetch(:modal) { false } %>
+<% gallery_filter_params = local_assigns.fetch(:gallery_filter_params) { @gallery_filter_params || {} } %>
+<% collection = local_assigns.fetch(:collection) { @collection } %>
+<%= turbo_stream_from "kubik_media_gallery" %>
+<div class="media-library-listing-container">
+  <div class="media-library-listing-container__upload"
+       id="kubik-media-gallery--file_upload_form--container"
+       data-controller="image_dropzone"
+       data-image_dropzone-text-value="Select a file"
+       data-image-dropzone-modal-value="<%= modal %>"
+       data-image_dropzone-turbo-value="<%= Mime::Type.lookup_by_extension(:turbo_stream).present? %>"
+       data-image-dropzone-accepted-files-value="<%= Kubik::MediaUpload.allowed_upload_info[:allowed_mime_types] %>"
+       data-image-dropzone-max-filesize-mb-value="<%= Kubik::MediaUpload.allowed_upload_info[:max_filesize_mb] %>">
+    <%= render "upload_dropzone_targets" %>
+    <%= render "file_upload_form", modal: modal %>
+  </div>
+  <%= render "gallery_filters", modal: modal, gallery_filter_params: gallery_filter_params %>
+  <%= render "gallery_results",
+             collection: collection,
+             modal: modal,
+             turbo_action: turbo_action,
+             gallery_filter_params: gallery_filter_params %>
+</div>

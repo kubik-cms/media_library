@@ -9,10 +9,12 @@ export default defineConfig({
     },
     rollupOptions: {
       input: 'src/index.ts',
-      external: ['stimulus'],
+      external: ['stimulus', '@hotwired/stimulus', '@hotwired/turbo'],
       output: {
         globals: {
-          stimulus: 'Stimulus'
+          stimulus: 'Stimulus',
+          '@hotwired/stimulus': 'Stimulus',
+          '@hotwired/turbo': 'Turbo'
         }
       }
     }

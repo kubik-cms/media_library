@@ -9,7 +9,8 @@
   <% file_type = Hash[ [:type, :format].zip(mime_type.split("/")) ] %>
   <%= render 'selectable_image_preview', image: image, file: file, mime_type: mime_type, file_type: file_type, modal: modal %>
   <div class='kubik-media-gallery--media_item_container--title'>
-    <%= file.metadata['filename'] %>
+    <%= image.gallery_display_name %>
   </div>
+  <%= render "media_item_tags", upload: image %>
 <% end %>
 

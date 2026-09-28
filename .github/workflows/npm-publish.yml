@@ -1,0 +1,40 @@
+name: npm-publish
+
+on:
+  push:
+    branches:
+      - master
+    paths:
+      - "package/**"
+      - ".github/workflows/npm-publish.yml"
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: package
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          registry-url: https://registry.npmjs.org
+          cache: yarn
+          cache-dependency-path: package/yarn.lock
+
+      - run: yarn install --frozen-lockfile
+      - run: yarn build
+
+      - uses: pascalgn/npm-publish-action@1.3.9
+        with:
+          workspace: "package"
+          publish_command: "yarn"
+          publish_args: "--non-interactive"
+          create_tag: "true"
+          tag_name: "npm-v%s"
+          tag_message: "@kubik-cms/media_library@%s"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NPM_AUTH_TOKEN: ${{ secrets.NPM_AUTH_TOKEN }}

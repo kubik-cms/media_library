@@ -1,17 +1,17 @@
-image.inputs "Image details - #{image.object.image_attacher.file.metadata['filename']}" do
+image.inputs "Image details - #{image.object.gallery_display_name}" do
   columns do
     column do
       text_node image_tag image.object.image_url, class: 'media_image'
     end
     column do
       image.fields_for :additional_info do |f|
-        f.input :img_title, input_html: { value: image.object.additional_info['img_title'] }
+        f.input :img_title, required: false, input_html: { value: image.object.additional_info['img_title'] }
       end
       image.fields_for :additional_info do |f|
-        f.input :alt_text, input_html: { value: image.object.additional_info['alt_text'] }
+        f.input :alt_text, required: false, input_html: { value: image.object.additional_info['alt_text'] }
       end
       image.fields_for :additional_info do |f|
-        f.input :img_credit, input_html: { value: image.object.additional_info['img_credit'] }
+        f.input :img_credit, required: false, input_html: { value: image.object.additional_info['img_credit'] }
       end
     end
   end

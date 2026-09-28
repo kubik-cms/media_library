@@ -11,6 +11,7 @@ module Kubik
         def db_migrations
           migration_template "migrations/create_kubik_media_uploads.rb", "db/migrate/create_kubik_media_uploads.rb"
           migration_template "migrations/create_kubik_uploads.rb", "db/migrate/create_kubik_uploads.rb"
+          migration_template "migrations/acts_as_taggable_on_migration.rb", "db/migrate/acts_as_taggable_on_migration.rb"
           puts "Database migrations added"
         end
 

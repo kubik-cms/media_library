@@ -48,6 +48,29 @@ class KubikMediaUploadTest < ActiveSupport::TestCase
       assert @image_example.file.nil?
     end
 
+    test "return_object includes file url for PDF uploads" do
+      object = @document_example.return_object
+      assert_equal @document_example.gallery_display_name, object[:display_name]
+      assert_equal @document_example.file.metadata["filename"], object[:display_name]
+      assert object[:file_url].present?
+    end
+
+    test "gallery_display_name prefers title over filename" do
+      @image_example.update!(additional_info: { "alt_text" => "", "img_title" => "Summer hero" })
+
+      assert_equal "Summer hero", @image_example.gallery_display_name
+      assert_equal "Summer hero", @image_example.return_object[:display_name]
+    end
+
+    test "gallery_display_name falls back to filename" do
+      assert_equal @image_example.upload_filename, @image_example.gallery_display_name
+    end
+
+    test "public_media_url returns file url for documents and image url for images" do
+      assert_equal @document_example.file_url, @document_example.public_media_url
+      assert_equal @image_example.image_url, @image_example.public_media_url
+    end
+
     test "Correctly extracts other metadata" do
       assert_instance_of Integer, @image_example.image.size
       assert_instance_of Integer, @image_example.image.width

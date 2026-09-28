@@ -1,0 +1,10 @@
+<% absolute_url = kubik_media_absolute_url(url) %>
+<button type="button"
+        class="kubik-copy-link-button kubik-media-gallery--copy_link"
+        title="Copy file link"
+        aria-label="Copy file link"
+        data-controller="copy-media-link"
+        data-copy-media-link-url-value="<%= absolute_url %>"
+        data-action="copy-media-link#copy">
+  <span class="material-symbols-outlined" aria-hidden="true">content_copy</span>
+</button>

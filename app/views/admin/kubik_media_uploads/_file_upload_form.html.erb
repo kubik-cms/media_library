@@ -13,6 +13,6 @@
   <div class="kubik-media-gallery--file_select_container dz-message kubik--dz-message" data-dz-message>
     <span class='kubik-media-gallery--file_select_header kubik--dz-message-header'>Add an image...</span>
     <span class='kubik-media-gallery--file_select_link kubik--dz-message-link'>select files from your computer</span>
-    <span class='kubik-media-gallery--file_select_hint kubik--dz-message-hint'>Maximum siez 2Mb | .jpg .png .pdf</span>
+    <span class='kubik-media-gallery--file_select_hint kubik--dz-message-hint'><%= Kubik::MediaUpload.allowed_upload_info[:drop_area_text] %></span>
   </div>
 <% end %>

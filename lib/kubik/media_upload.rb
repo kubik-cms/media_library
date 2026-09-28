@@ -166,8 +166,13 @@ module Kubik
     end
 
     after_create :process!
+    # Shrine may promote file cache → store in the same transaction as create; plain
+    # `on: :create` after_commit often never runs the enqueue. Enqueue on any commit
+    # where the PDF is stored and previews are still missing.
+    after_commit :enqueue_pdf_preview, if: :should_enqueue_pdf_preview_job?
+    after_commit :broadcast_gallery_live_update!, on: :update, if: :gallery_broadcast_state_changed?
 
-    if defined?(acts_as_taggable_on)
+    if defined?(ActsAsTaggableOn)
       acts_as_taggable_on :media_tags
     end
 
@@ -185,6 +190,142 @@ module Kubik
         metadata: { mime_type: 'application/pdf' }
       }.to_json)
     end)
+
+    # Shrine JSONB attachments expose an "id" key when present.
+    scope :gallery_images, -> { where("image_data ? 'id'") }
+    scope :gallery_files, -> { where("file_data ? 'id'") }
+
+    scope :uploaded_on_or_after, lambda { |date|
+      day = parse_gallery_filter_date(date)
+      day ? where(created_at: day.in_time_zone.beginning_of_day..) : all
+    }
+
+    scope :uploaded_on_or_before, lambda { |date|
+      day = parse_gallery_filter_date(date)
+      day ? where(created_at: ..day.in_time_zone.end_of_day) : all
+    }
+
+    scope :gallery_untagged, lambda {
+      return all unless tagging_available?
+
+      sql = <<~SQL.squish
+        NOT EXISTS (
+          SELECT 1 FROM taggings
+          WHERE taggings.taggable_id = #{quoted_table_name}.id
+            AND taggings.taggable_type = ?
+            AND taggings.context = 'media_tags'
+        )
+      SQL
+      where(sql, name)
+    }
+
+    def self.filter_gallery(scope = all, filter_params = {})
+      params = filter_params.to_h.with_indifferent_access
+      relation = scope
+
+      case params[:media_type].to_s
+      when "image"
+        relation = relation.gallery_images
+      when "file"
+        relation = relation.gallery_files
+      end
+
+      uploaded_from, uploaded_to = normalize_gallery_filter_dates(params[:uploaded_from], params[:uploaded_to])
+      relation = relation.uploaded_on_or_after(uploaded_from) if uploaded_from.present?
+      relation = relation.uploaded_on_or_before(uploaded_to) if uploaded_to.present?
+
+      relation = gallery_search(relation, params[:q]) if params[:q].present?
+
+      if gallery_untagged_requested?(params)
+        relation = relation.gallery_untagged if tagging_available?
+      else
+        tags = KubikMediaLibrary.normalize_gallery_media_tags(params)
+        if tags.any? && tagging_available?
+          match_all = params[:media_tags_match].to_s.downcase == "and"
+          tag_options = { on: :media_tags }
+          tag_options[:all] = true if match_all
+          tag_options[:any] = true unless match_all
+          relation = relation.tagged_with(tags, **tag_options)
+        end
+      end
+
+      relation
+    end
+
+    def self.gallery_order(relation, sort_param)
+      case sort_param.to_s
+      when "oldest"
+        relation.order(created_at: :asc)
+      when "name"
+        relation.order(
+          Arel.sql(
+            "LOWER(COALESCE(
+              NULLIF(TRIM(additional_info->>'img_title'), ''),
+              NULLIF(TRIM(additional_info->>'document_title'), ''),
+              image_data->'metadata'->>'filename',
+              file_data->'metadata'->>'filename',
+              ''
+            )) ASC"
+          )
+        )
+      else
+        relation.order(created_at: :desc)
+      end
+    end
+
+    def self.gallery_search(relation, query)
+      term = query.to_s.strip
+      return relation if term.blank?
+
+      pattern = "%#{sanitize_sql_like(term)}%"
+      sql = <<~SQL.squish
+        image_data->'metadata'->>'filename' ILIKE :pattern
+        OR file_data->'metadata'->>'filename' ILIKE :pattern
+        OR additional_info->>'img_title' ILIKE :pattern
+        OR additional_info->>'document_title' ILIKE :pattern
+      SQL
+      relation.where(sql, pattern: pattern)
+    end
+
+    def self.normalize_gallery_filter_dates(uploaded_from, uploaded_to)
+      from = parse_gallery_filter_date(uploaded_from)
+      to = parse_gallery_filter_date(uploaded_to)
+      from, to = to, from if from && to && from > to
+
+      [
+        from ? from.iso8601 : uploaded_from.presence,
+        to ? to.iso8601 : uploaded_to.presence
+      ]
+    end
+
+    def self.gallery_untagged_requested?(params)
+      KubikMediaLibrary.gallery_untagged_requested?(params)
+    end
+
+    def self.normalize_gallery_media_tags(params)
+      KubikMediaLibrary.normalize_gallery_media_tags(params)
+    end
+
+    def self.tagging_available?
+      KubikMediaLibrary.tagging_available? && respond_to?(:tagged_with)
+    end
+
+    def self.gallery_media_tag_options
+      return [] unless tagging_available?
+
+      tag_counts_on(:media_tags).sort_by(&:name).map(&:name)
+    end
+
+    def self.parse_gallery_filter_date(value)
+      return nil if value.blank?
+
+      return value.to_date if value.is_a?(Date)
+      return value.in_time_zone.to_date if value.respond_to?(:in_time_zone)
+
+      Date.iso8601(value.to_s)
+    rescue ArgumentError, TypeError
+      nil
+    end
 
     def self.available_derivatives
       Kubik::DerivativesResolver.resolve(
@@ -240,12 +381,16 @@ module Kubik
     def self.allowed_upload_info
       allowed_mime_types = Kubik::MediaFileUploader::ALLOWED_TYPES +
                            Kubik::MediaImageUploader::ALLOWED_TYPES
-      drop_area_text = DROP_AREA_TEXT
+      max_filesize_mb = [
+        Kubik::MediaFileUploader::MAX_SIZE,
+        Kubik::MediaImageUploader::MAX_SIZE
+      ].max / (1024 * 1024)
       {
         allowed_mime_types: allowed_mime_types.join(', '),
         file_mime_types: Kubik::MediaFileUploader::ALLOWED_TYPES.to_json,
         image_mime_types: Kubik::MediaImageUploader::ALLOWED_TYPES.to_json,
-        drop_area_text: drop_area_text
+        drop_area_text: DROP_AREA_TEXT,
+        max_filesize_mb: max_filesize_mb
       }
     end
 
@@ -294,10 +439,26 @@ module Kubik
       resize!
     end
 
+    def pdf_upload?
+      file_data.present? && file&.mime_type == "application/pdf"
+    end
+
+    def public_media_url
+      image_data.present? ? image_url : file_url
+    end
+
+    def file_preview_derivative?(key)
+      file_data.present? && file_attacher.derivatives.key?(key.to_sym)
+    end
+
+    def file_preview_available?
+      pdf_upload? && file_preview_derivative?(:thumb_400x400)
+    end
+
     def admin_file_thumbnail
-      path = file_url(:thumb_400x400)
-      path = file_url(:optimised) if path.blank?
-      path = file_url(:original) if path.blank?
+      path = file_url(:thumb_400x400) if file_preview_derivative?(:thumb_400x400)
+      path = file_url(:optimised) if path.blank? && file_preview_derivative?(:optimised)
+      path = file_url if path.blank?
 
       path
     end
@@ -310,14 +471,59 @@ module Kubik
       path
     end
 
+    def upload_filename
+      if image_data.present?
+        image_data.dig("metadata", "filename").presence ||
+          image_data.deep_symbolize_keys.dig(:metadata, :filename).presence
+      elsif file_data.present?
+        file&.metadata&.dig("filename").presence
+      end
+    end
+
+    def gallery_title
+      info = (additional_info || {}).with_indifferent_access
+      if image_data.present?
+        info[:img_title].to_s.strip.presence
+      elsif file_data.present?
+        info[:document_title].to_s.strip.presence
+      end
+    end
+
+    def gallery_display_name
+      gallery_title.presence || upload_filename.to_s
+    end
+
     def return_object
-      {
-        display_name: image_data.deep_symbolize_keys.dig(:metadata, :filename),
-        id: id,
-        thumb: image_url(:thumb_200x200),
-        status_info: { active: true },
-        url: Rails.application.routes.url_helpers.admin_kubik_media_uploads_path(self, kubik_search: true, format: :json)
-      }
+      if image_data.present?
+        {
+          display_name: gallery_display_name,
+          id: id,
+          thumb: image_url(:thumb_200x200),
+          file_url: nil,
+          url: Rails.application.routes.url_helpers.admin_kubik_media_uploads_path(self, kubik_search: true, format: :json)
+        }
+      else
+        {
+          display_name: gallery_display_name,
+          id: id,
+          thumb: admin_file_thumbnail,
+          file_url: file_url,
+          url: Rails.application.routes.url_helpers.admin_kubik_media_uploads_path(self, kubik_search: true, format: :json)
+        }
+      end
+    end
+
+    def regenerate_file_preview!
+      return unless pdf_upload?
+
+      file_attacher.derivatives.each_key do |key|
+        next if key == :original
+
+        file_attacher.remove_derivative(key, delete: true)
+      end
+      file_attacher.atomic_persist
+      update_column(:aasm_state, "uploaded")
+      ProcessPdfPreviewJob.perform_later(self)
     end
 
     def image_derivative?(key)
@@ -349,6 +555,28 @@ module Kubik
 
     def self.preferred_modern_formats
       KubikMediaLibrary.processor.available_modern_formats.reverse
+    end
+
+    def should_enqueue_pdf_preview_job?
+      return false unless pdf_upload? && !file_preview_available?
+      return false unless file&.storage_key == :store
+      return false unless previous_changes.key?("file_data")
+
+      true
+    end
+
+    def enqueue_pdf_preview
+      ProcessPdfPreviewJob.perform_later(self)
+    end
+
+    def gallery_broadcast_state_changed?
+      saved_change_to_aasm_state? ||
+        saved_change_to_image_data? ||
+        saved_change_to_file_data?
+    end
+
+    def broadcast_gallery_live_update!
+      KubikMediaLibrary::GalleryBroadcaster.broadcast!(self, event: :update)
     end
 
     private

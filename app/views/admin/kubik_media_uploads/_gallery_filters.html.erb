@@ -1,0 +1,71 @@
+<% filters = local_assigns.fetch(:gallery_filter_params) {
+  params.permit(
+    :media_type, :uploaded_from, :uploaded_to, :media_tag, :media_tags_match, :q, :gallery_sort, :media_untagged,
+    media_tags: []
+  ).to_h
+}.with_indifferent_access %>
+<% gallery_tags = KubikMediaLibrary.normalize_gallery_media_tags(filters) %>
+<% clear_path = admin_kubik_media_uploads_path(modal ? { modal: true } : {}) %>
+<% primary_fields_html = capture do %>
+  <%= render partial: "/kubik/interface_elements/filter_text",
+             locals: {
+               name: :q,
+               label: "Name",
+               value: filters[:q],
+               debounce_ms: 400
+             } %>
+  <%= render partial: "/kubik/interface_elements/filter_select",
+             locals: {
+               name: :media_type,
+               label: "Type",
+               options: [
+                 ["All types", ""],
+                 ["Images", "image"],
+                 ["Documents & files", "file"]
+               ],
+               selected: filters[:media_type]
+             } %>
+  <%= render partial: "/kubik/interface_elements/filter_select",
+             locals: {
+               name: :gallery_sort,
+               label: "Sort",
+               options: [
+                 ["Newest first", "newest"],
+                 ["Oldest first", "oldest"],
+                 ["Name (A–Z)", "name"]
+               ],
+               selected: filters.fetch(:gallery_sort, "newest")
+             } %>
+  <%= render partial: "/kubik/interface_elements/filter_date",
+             locals: { name: :uploaded_from, label: "Uploaded from", value: filters[:uploaded_from] } %>
+  <%= render partial: "/kubik/interface_elements/filter_date",
+             locals: { name: :uploaded_to, label: "Uploaded to", value: filters[:uploaded_to] } %>
+<% end %>
+<% tags_fields_html = capture do %>
+  <% if KubikMediaLibrary.tagging_available? %>
+    <%= render partial: "/kubik/interface_elements/filter_tags",
+               locals: {
+                 name: "media_tags",
+                 match_name: :media_tags_match,
+                 label: "Tags",
+                 selected_tags: gallery_tags,
+                 match: filters[:media_tags_match],
+                 suggestions_url: tag_suggestions_admin_kubik_media_uploads_path,
+                 autosubmit_debounce_ms: 300,
+                 untagged_name: :media_untagged,
+                 untagged_checked: KubikMediaLibrary.gallery_untagged_requested?(filters),
+                 untagged_label: "Untagged only"
+               } %>
+  <% end %>
+<% end %>
+<%= render partial: "/kubik/interface_elements/filter_bar",
+           locals: {
+             url: admin_kubik_media_uploads_path,
+             clear_url: clear_path,
+             turbo_frame: "media_gallery_results",
+             clear_turbo_frame: (modal ? KubikMediaLibrary::ActiveAdmin::Registration::MODAL_GALLERY_TURBO_FRAME : nil),
+             modal: modal,
+             compact: true,
+             fields_html: primary_fields_html,
+             tags_html: tags_fields_html
+           } %>

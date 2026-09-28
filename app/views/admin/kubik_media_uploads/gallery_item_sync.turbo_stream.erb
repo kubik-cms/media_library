@@ -1,0 +1,14 @@
+<% partial_name = modal ? "selectable_image" : "image" %>
+<% item_locals = { image: upload, modal: modal } %>
+<% partial_path = "admin/kubik_media_uploads/#{partial_name}" %>
+
+<% if event == :create %>
+  <%= turbo_stream.remove "kubik_media_gallery_empty" %>
+  <%= turbo_stream.prepend "media_list" do %>
+    <%= render partial: partial_path, locals: item_locals %>
+  <% end %>
+<% else %>
+  <%= turbo_stream.replace "kubik_media_upload_#{upload.id}" do %>
+    <%= render partial: partial_path, locals: item_locals %>
+  <% end %>
+<% end %>

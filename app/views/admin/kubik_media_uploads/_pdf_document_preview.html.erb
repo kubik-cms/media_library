@@ -1,0 +1,20 @@
+<div class="media_pdf_preview_container"
+     data-controller="pdf-preview"
+     data-pdf-preview-url-value="<%= public_url %>">
+  <%= image_tag upload.admin_file_thumbnail, class: "media_image", alt: filename %>
+  <p class="media_pdf_preview_actions">
+    <button type="button"
+            class="button"
+            data-pdf-preview-target="reveal"
+            data-action="pdf-preview#reveal">
+      Show full preview
+    </button>
+    <%= link_to "Open PDF in new tab", public_url, target: "_blank", rel: "noopener" %>
+  </p>
+  <div class="media_pdf_preview_panel" data-pdf-preview-target="panel" hidden>
+    <iframe data-pdf-preview-target="frame"
+            class="media_pdf_preview"
+            title="<%= filename %>"
+            loading="lazy"></iframe>
+  </div>
+</div>

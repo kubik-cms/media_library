@@ -14,6 +14,7 @@ require "kubik/processing/format_support"
 require "kubik/processing/adapter"
 require "kubik/processing/vips_adapter"
 require "kubik_media_library/view_helper"
+require "kubik_media_library/public_url"
 
 # Optional dependencies
 begin
@@ -24,7 +25,18 @@ rescue LoadError
   # kubik_wysiwyg is not available, but that's okay
 end
 
+begin
+  require "acts-as-taggable-on"
+  ACTS_AS_TAGGABLE_ON_AVAILABLE = true
+rescue LoadError
+  ACTS_AS_TAGGABLE_ON_AVAILABLE = false
+end
+
 module KubikMediaLibrary
+  GALLERY_STREAM_NAME = "kubik_media_gallery"
+
+  require "kubik_media_library/gallery_broadcaster"
+
   class << self
     def config
       @config ||= Configuration.new
@@ -41,6 +53,24 @@ module KubikMediaLibrary
 
     def wysiwyg_available?
       KUBIK_WYSIWYG_AVAILABLE
+    end
+
+    def tagging_available?
+      ACTS_AS_TAGGABLE_ON_AVAILABLE &&
+        ActiveRecord::Base.connection.table_exists?("tags") &&
+        ActiveRecord::Base.connection.table_exists?("taggings")
+    rescue ActiveRecord::NoDatabaseError, ActiveRecord::ConnectionNotEstablished
+      false
+    end
+
+    # Normalizes tag params from gallery filter forms (array, legacy media_tag, blanks).
+    def normalize_gallery_media_tags(params)
+      source = params.to_h.with_indifferent_access
+      tags = Array(source[:media_tags]).map { |tag| tag.to_s.strip }.reject(&:blank?)
+      if tags.empty? && source[:media_tag].present?
+        tags = [source[:media_tag].to_s.strip]
+      end
+      tags.uniq
     end
   end
 
@@ -65,9 +95,12 @@ module KubikMediaLibrary
         end
 
         app.config.to_prepare do
+          require "kubik_media_library/gallery_broadcaster"
+          load File.join(lib_root, "kubik_media_library", "gallery_filters.rb")
+
           require "kubik_media_library/active_admin/registration"
 
-          Kubik.register_models! unless defined?(Kubik::MediaUpload)
+          Kubik.register_models!
           next unless KubikMediaLibrary.config.auto_register_active_admin
 
           begin

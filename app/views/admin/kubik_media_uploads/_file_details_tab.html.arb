@@ -1,6 +1,64 @@
-attributes_table_for image.object do
-  row 'Original' do
-    "Original - #{image.object.file_url}"
+upload = image.object
+file_meta = upload.file.metadata
+public_url = upload.file_url
+filename = file_meta["filename"]
+display_name = upload.gallery_display_name
+
+legend_header = helpers.render(
+  partial: "admin/kubik_media_uploads/media_details_legend_header",
+  locals: {
+    title: "Document details - #{display_name}",
+    url: upload.public_media_url
+  }
+)
+
+image.inputs name: legend_header do
+  columns do
+    column do
+      if upload.file_preview_available?
+        text_node render(
+          partial: "admin/kubik_media_uploads/pdf_document_preview",
+          locals: { upload: upload, public_url: public_url, filename: filename }
+        )
+      else
+        para "Preview is being generated. Refresh this page in a moment.", class: "inline-hints"
+        if upload.file_preview_derivative?(:optimised)
+          text_node image_tag(upload.file_url(:optimised), class: "media_image", alt: filename)
+        end
+        para link_to("Open PDF in new tab", public_url, target: "_blank", rel: "noopener")
+      end
+    end
+
+    column do
+      image.fields_for :additional_info do |f|
+        if KubikMediaLibrary.wysiwyg_available?
+          f.input :document_title, as: :kubik_wysiwyg, required: false, input_html: { value: upload.additional_info["document_title"] }
+        else
+          f.input :document_title, label: "Title", required: false, input_html: { value: upload.additional_info["document_title"] }
+        end
+      end
+      image.fields_for :additional_info do |f|
+        if KubikMediaLibrary.wysiwyg_available?
+          f.input :document_description, as: :kubik_wysiwyg, required: false, input_html: { value: upload.additional_info["document_description"] }
+        else
+          f.input :document_description, label: "Description", required: false, input_html: { value: upload.additional_info["document_description"] }
+        end
+      end
+      if KubikMediaLibrary.tagging_available?
+        tag_options = {
+          label: "Tags",
+          hint: "Comma-separated labels (e.g. hero, brochure, 2024)",
+          min_length: 1,
+          required: false
+        }
+        if helpers.kubik_tags_field_available?
+          tag_options[:as] = :"kubik/tags"
+          tag_options[:suggestions_url] = lambda {
+            tag_suggestions_admin_kubik_media_uploads_path
+          }
+        end
+        image.input :media_tag_list, **tag_options
+      end
+    end
   end
 end
-
