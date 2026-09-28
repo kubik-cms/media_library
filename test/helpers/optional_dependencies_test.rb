@@ -16,4 +16,14 @@ class OptionalDependenciesTest < ActiveSupport::TestCase
   test "KUBIK_WYSIWYG_AVAILABLE constant is defined" do
     assert defined?(KUBIK_WYSIWYG_AVAILABLE)
   end
+
+  test "KUBIK_INTERFACE_ELEMENTS_AVAILABLE constant is defined" do
+    assert defined?(KUBIK_INTERFACE_ELEMENTS_AVAILABLE)
+  end
+
+  test "normalize_gallery_media_tags accepts comma-separated media_tags string" do
+    tags = KubikMediaLibrary.normalize_gallery_media_tags({ media_tags: "hero, brochure" })
+
+    assert_equal %w[hero brochure], tags
+  end
 end
