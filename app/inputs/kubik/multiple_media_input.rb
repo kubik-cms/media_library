@@ -101,6 +101,7 @@ module Kubik
                              'data-kubik-modal-header-text': modal_header,
                              'data-kubik-modal-action': 'return',
                              'data-kubik-modal-return-controller': "multiple_image_selector##{wrapper_html_options[:id]}",
+                             'data-kubik-modal-frame-id': KubikMediaLibrary::MODAL_GALLERY_TURBO_FRAME,
                              'data-action': 'click->kubik-modal#openModal',
                              class: 'kubik-media-gallery--file_select_container kubik-media-gallery--file_select_container__small') do
           template.content_tag(:div, class: 'kubik-select-placeholder') do
@@ -138,6 +139,7 @@ module Kubik
                            'data-kubik-modal-action': 'return',
                            'data-kubik-modal-return-controller': "multiple_image_selector##{wrapper_html_options[:id]}",
                            'data-kubik-modal-return-payload': '{ "index": ${index}, "id": ${id} }',
+                           'data-kubik-modal-frame-id': KubikMediaLibrary::MODAL_GALLERY_TURBO_FRAME,
                            'data-action': 'click->kubik-modal#openModal',
                            class: 'kubik-media-gallery--media_item_action kubik-media-gallery--media_item_action__brand') do
         (

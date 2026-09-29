@@ -32,14 +32,18 @@ rescue LoadError
   ACTS_AS_TAGGABLE_ON_AVAILABLE = false
 end
 
-begin
-  require "kubik_interface_elements"
-  KUBIK_INTERFACE_ELEMENTS_AVAILABLE = true
-rescue LoadError
-  KUBIK_INTERFACE_ELEMENTS_AVAILABLE = false
-end
+require "kubik_interface_elements"
 
 module KubikMediaLibrary
+  MODAL_GALLERY_TURBO_FRAME = "kubik_media_library_modal_frame"
+  # Default turbo-frame id from @kubik-cms/interface_elements when triggers omit data-kubik-modal-frame-id.
+  INTERFACE_ELEMENTS_DEFAULT_MODAL_FRAME = "kubik_modal_frame"
+
+  MODAL_GALLERY_TURBO_FRAME_IDS = [
+    MODAL_GALLERY_TURBO_FRAME,
+    "media_library_frame",
+    INTERFACE_ELEMENTS_DEFAULT_MODAL_FRAME
+  ].freeze
   GALLERY_STREAM_NAME = "kubik_media_gallery"
 
   require "kubik_media_library/gallery_broadcaster"
@@ -70,10 +74,6 @@ module KubikMediaLibrary
       false
     end
 
-    def interface_elements_available?
-      KUBIK_INTERFACE_ELEMENTS_AVAILABLE
-    end
-
     # Normalizes tag params from gallery filter forms (array, legacy media_tag, blanks).
     def normalize_gallery_media_tags(params)
       source = params.to_h.with_indifferent_access
@@ -95,11 +95,8 @@ module KubikMediaLibrary
       config.assets.precompile += %w( kubik_media_gallery.js )
 
       initializer :kubik_media_library_view_helper do
-        require "kubik_media_library/gallery_filters_fallback_helper"
-
         ActiveSupport.on_load(:action_view) do
           include KubikMediaLibrary::ViewHelper
-          include KubikMediaLibrary::GalleryFiltersFallbackHelper unless KubikMediaLibrary.interface_elements_available?
         end
       end
 

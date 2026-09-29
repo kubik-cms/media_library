@@ -44,7 +44,7 @@
 <%= render_kubik_filter_bar url: admin_kubik_media_uploads_path,
                              clear_url: clear_path,
                              turbo_frame: "media_gallery_results",
-                             clear_turbo_frame: (modal ? KubikMediaLibrary::ActiveAdmin::Registration::MODAL_GALLERY_TURBO_FRAME : nil),
+                             clear_turbo_frame: (modal ? KubikMediaLibrary::MODAL_GALLERY_TURBO_FRAME : nil),
                              modal: modal,
                              compact: true,
                              fields_html: primary_fields_html,

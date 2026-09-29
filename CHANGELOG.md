@@ -1,5 +1,13 @@
 ## [Unreleased]
 
+## [0.2.9] - 2026-09-28
+
+### Changed
+
+- `kubik_interface_elements` is a required dependency (filter/tag UI); removed duplicate fallback helpers.
+- Media picker passes `data-kubik-modal-frame-id` for the shared modal shell.
+- Modal gallery index accepts the interface-elements default frame id (`kubik_modal_frame`) and echoes the request frame id in `_modal_gallery_frame`.
+
 ## [0.2.7] - 2026-08-25
 
 ### Added

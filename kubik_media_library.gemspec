@@ -36,6 +36,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency "fastimage"
   spec.add_dependency "rails", ">= 6.0"
   spec.add_dependency "ruby-vips", ">= 2.0"
+  spec.add_dependency "kubik_interface_elements", ">= 0.2.10"
   spec.add_development_dependency "pg"
   spec.add_development_dependency "warning"
 

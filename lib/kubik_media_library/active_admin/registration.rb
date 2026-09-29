@@ -3,8 +3,6 @@
 module KubikMediaLibrary
   module ActiveAdmin
     module Registration
-      MODAL_GALLERY_TURBO_FRAME = "kubik_media_library_modal_frame"
-
       module_function
 
       def register_media_upload!(&block)
@@ -94,7 +92,7 @@ module KubikMediaLibrary
 
               if turbo_frame_request?
                 frame_id = request.headers["Turbo-Frame"].to_s
-                if [MODAL_GALLERY_TURBO_FRAME, "media_library_frame"].include?(frame_id)
+                if KubikMediaLibrary::MODAL_GALLERY_TURBO_FRAME_IDS.include?(frame_id)
                   render partial: "modal_gallery_frame",
                          locals: index_locals.merge(collection: @collection),
                          layout: false
