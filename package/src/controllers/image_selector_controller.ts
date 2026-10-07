@@ -1,5 +1,6 @@
 import { Controller } from "@hotwired/stimulus"
 import { template } from 'lodash'
+import { applyTemplateImageSources } from '../apply_template_image_sources'
 
 export default class extends Controller {
   idValue: Number
@@ -52,6 +53,8 @@ export default class extends Controller {
         this.imageContainerTarget.innerHTML += this.existingFieldsDeleteTemplate(this.relatedMediaValue)
       }
     }
+
+    applyTemplateImageSources(this.imageContainerTarget)
   }
 
   get imageTemplate(): Function {

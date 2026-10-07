@@ -1,5 +1,9 @@
 ## [Unreleased]
 
+### Fixed
+
+- Media picker image templates no longer use a relative `src="${thumb}"` placeholder (which could be requested as a URL under the current admin path). Thumbnail URLs are applied via `data-thumb-src` after lodash renders the template.
+
 ## [0.2.9] - 2026-09-28
 
 ### Changed

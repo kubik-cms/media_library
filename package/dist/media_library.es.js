@@ -5438,6 +5438,15 @@ var lodash = { exports: {} };
     }
   }).call(commonjsGlobal);
 })(lodash, lodash.exports);
+function applyTemplateImageSources(root) {
+  root.querySelectorAll("img[data-thumb-src]").forEach((img) => {
+    const url = img.dataset.thumbSrc;
+    if (!url)
+      return;
+    img.src = url;
+    img.removeAttribute("data-thumb-src");
+  });
+}
 class image_selector_controller_default extends Controller {
   connect() {
     this._renderResults();
@@ -5456,6 +5465,7 @@ class image_selector_controller_default extends Controller {
         this.imageContainerTarget.innerHTML += this.existingFieldsDeleteTemplate(this.relatedMediaValue);
       }
     }
+    applyTemplateImageSources(this.imageContainerTarget);
   }
   get imageTemplate() {
     return lodash.exports.template(this.imageTemplateTarget.innerHTML);
@@ -5520,6 +5530,7 @@ class multiple_image_selector_controller_default extends Controller {
       }
     }, this);
     this.imageContainerTarget.innerHTML += this.emptyTemplate();
+    applyTemplateImageSources(this.imageContainerTarget);
   }
   get imageTemplate() {
     return lodash.exports.template(this.imageTemplateTarget.innerHTML);
