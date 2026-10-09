@@ -123,7 +123,7 @@ module Kubik
             (
               swap_action +
               template.content_tag(:div, class: 'kubik-media-gallery--media_item_container--image') do
-                template.tag.img(alt: '', 'data-thumb-src': '${thumb}')
+                template.tag.img(alt: '', src: '${thumb}')
               end +
               remove_action
             )

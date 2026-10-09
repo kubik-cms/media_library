@@ -1,8 +1,10 @@
 ## [Unreleased]
 
+## [0.2.11] - 2026-10-09
+
 ### Fixed
 
-- Media picker image templates no longer use a relative `src="${thumb}"` placeholder (which could be requested as a URL under the current admin path). Thumbnail URLs are applied via `data-thumb-src` after lodash renders the template.
+- Media picker image templates use `tag.img` for thumbnail placeholders so Rails 8 does not render attribute hashes as element text. Lodash still interpolates `src="${thumb}"` (root-relative URLs from `admin_image_thumbnail`).
 
 ## [0.2.9] - 2026-09-28
 
