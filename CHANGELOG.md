@@ -1,5 +1,11 @@
 ## [Unreleased]
 
+## [0.2.12] - 2026-10-10
+
+### Fixed
+
+- Media gallery status partial no longer raises when `kubik_ai` is present but predates `KubikAi::Media::GalleryIndicator` (checks `defined?(KubikAi::Media::GalleryIndicator)` instead of `defined?(KubikAi)`).
+
 ## [0.2.11] - 2026-10-09
 
 ### Fixed

@@ -2,7 +2,7 @@
 <div class="kubik-media-gallery--media_item_container--status">
   <%= render Kubik::Media::ProcessingProgressComponent.new(upload: upload) %>
   <div class="kubik-media-gallery--media_item_container--actions">
-    <% if defined?(KubikAi) && KubikAi::Media::GalleryIndicator.gallery_attention?(upload) %>
+    <% if defined?(KubikAi::Media::GalleryIndicator) && KubikAi::Media::GalleryIndicator.gallery_attention?(upload) %>
       <%= render "kubik_ai/admin/media_gallery_ai_indicator", upload: upload %>
     <% end %>
     <%= render "copy_media_link_icon", url: upload.public_media_url %>
