@@ -17,6 +17,10 @@ module KubikMediaLibrary
       return if content.blank?
 
       Turbo::StreamsChannel.broadcast_stream_to(STREAM_NAME, content: content)
+
+      if upload.aasm_state == "ready" && defined?(KubikAi::Media::MissedAnalysis)
+        KubikAi::Media::MissedAnalysis.enqueue_if_eligible!(upload)
+      end
     rescue StandardError => e
       ::Rails.logger.error("[KubikMediaLibrary] Gallery broadcast failed for MediaUpload #{upload&.id}: #{e.message}")
     end

@@ -1,18 +1,5 @@
 <%= content_tag(:div, id: "kubik_media_upload_#{image.id}", class: 'kubik-media-gallery--media_item_container') do %>
-  <div class="kubik-media-gallery--media_item_container--status <%= image.aasm_state %>">
-    <div class='status'>
-    <% 4.times do %>
-      <div class='status_marker'></div>
-    <% end %>
-    </div>
-    <div class="kubik-media-gallery--media_item_container--actions">
-      <%= render "copy_media_link_icon", url: image.public_media_url %>
-      <%= link_to('delete',
-                  admin_kubik_media_upload_path(image),
-                  class: 'material-symbols-outlined kubik-media-gallery--media_item_container--icon',
-                  method: :delete, data: { confirm: 'Are you sure?' }) %>
-    </div>
-  </div>
+  <%= render "gallery_item_status", upload: image %>
   <% file = image.image.present? ? image.image : image.file %>
   <% mime_type = file.metadata['mime_type'] %>
   <% file_type = Hash[ [:type, :format].zip(mime_type.split("/")) ] %>

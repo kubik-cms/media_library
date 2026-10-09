@@ -1,5 +1,5 @@
 <% filters = local_assigns.fetch(:gallery_filter_params) {
-  params.permit(
+  ActionController::Parameters.new(request.query_parameters).permit(
     :media_type, :uploaded_from, :uploaded_to, :media_tag, :media_tags_match, :q, :gallery_sort, :media_untagged,
     media_tags: []
   ).to_h

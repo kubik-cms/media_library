@@ -36,18 +36,7 @@ module ActiveAdmin
       end
 
       def build_status(image)
-        div(class: "kubik-media-gallery--media_item_container--status #{image.aasm_state}") do
-          div class: 'status' do
-            4.times { div class: 'status_marker' }
-          end
-          div class: 'kubik-media-gallery--media_item_container--actions' do
-            render partial: 'copy_media_link_icon', locals: { url: image.public_media_url }
-            text_node link_to('delete',
-                              admin_kubik_media_upload_path(image),
-                              class: 'material-symbols-outlined kubik-media-gallery--media_item_container--icon',
-                              method: :delete, data: { confirm: 'Are you sure?' })
-          end
-        end
+        render partial: "admin/kubik_media_uploads/gallery_item_status", locals: { upload: image }
       end
 
       def build_preview(image)

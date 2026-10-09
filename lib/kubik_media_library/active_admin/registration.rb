@@ -31,16 +31,16 @@ module KubikMediaLibrary
           controller do
             def permitted_params
               params.permit(
-                :authenticity_token, :commit,
+                :utf8, :authenticity_token, :commit,
                 kubik_media_upload: [:image, :file, :media_tag_list, { additional_info: {} }],
                 media_upload: [:image, :file, :media_tag_list, { additional_info: {} }]
               )
             end
 
             def gallery_filter_params
-              # Read from query string (GET filter form). Do not compact_blank media_type so
-              # explicit empty values are not the issue; only pass present filter keys.
-              permitted = params.permit(
+              # Filter UI uses GET query params. Do not call params.permit(filters) on POST
+              # create/update bodies — that logs upload fields as unpermitted parameters.
+              permitted = gallery_filter_source_params.permit(
                 :media_type, :uploaded_from, :uploaded_to, :media_tag, :media_tags_match, :modal,
                 :q, :gallery_sort, :media_untagged,
                 media_tags: []
@@ -67,6 +67,14 @@ module KubikMediaLibrary
                 result[:media_tags_match] = match == "and" ? "and" : "or"
               end
               result.compact_blank
+            end
+
+            def gallery_filter_source_params
+              if request.post? || request.patch? || request.put?
+                ActionController::Parameters.new(request.query_parameters)
+              else
+                params
+              end
             end
 
             def filtered_collection
@@ -107,23 +115,32 @@ module KubikMediaLibrary
             end
 
             def create
-              if Kubik::MediaFileUploader::ALLOWED_TYPES.include?(params[:kubik_media_upload][:image].content_type)
-                params[:kubik_media_upload][:file] = params[:kubik_media_upload].delete(:image)
+              upload_params = params[:kubik_media_upload]
+              return super unless upload_params
+
+              @modal = upload_params[:modal].present? || params["modal"].present?
+              upload_params.delete(:modal)
+
+              if upload_params[:image].present? &&
+                 Kubik::MediaFileUploader::ALLOWED_TYPES.include?(upload_params[:image].content_type)
+                upload_params[:file] = upload_params.delete(:image)
               end
               create! do |success, _failure|
                 @collection = gallery_sorted_collection.page(params[:page])
                                                  .per(KubikMediaLibrary.config.active_admin_per_page)
                 @gallery_filter_params = gallery_filter_params
-                @modal = params[:kubik_media_upload][:modal].present?
-                @turbo_action = (params[:kubik_media_upload][:modal].present? || params['modal'].present?) ? 'advance' : false
+                @turbo_action = @modal ? "advance" : false
                 success.html { redirect_to admin_kubik_media_uploads_path, allow_other_host: false }
                 success.json
-                success.turbo_stream
+                success.turbo_stream do
+                  KubikMediaLibrary::GalleryBroadcaster.broadcast!(resource, event: :create)
+                end
               end
             end
 
             def update
               update! do |success, _failure|
+                KubikMediaLibrary::GalleryBroadcaster.broadcast!(resource)
                 success.html { redirect_to admin_kubik_media_uploads_path, allow_other_host: false }
               end
             end

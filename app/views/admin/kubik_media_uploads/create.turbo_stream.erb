@@ -1,6 +1,1 @@
-<%= turbo_stream.remove "kubik_media_gallery_empty" %>
-<%= turbo_stream.prepend "media_list" do %>
-  <% upload = resource %>
-  <% partial_name = @modal ? "selectable_image" : "image" %>
-  <%= render partial: partial_name, locals: { image: upload, modal: @modal } %>
-<% end %>
+<%# New gallery items are inserted via KubikMediaLibrary::GalleryBroadcaster (see Admin create action). %>

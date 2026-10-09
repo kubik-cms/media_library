@@ -5,6 +5,7 @@
   aria: { label: "Edit #{image.gallery_display_name}" }
 } %>
 <div class="kubik-media-gallery--media_item_container--image media_type_<%= file_type[:format] %>">
+  <%= render Kubik::Media::StatusDotComponent.new(upload: image) %>
   <% if file_type[:type] == 'image' %>
     <%= link_to edit_path, **tile_link_options do %>
       <%= image_tag image.admin_image_thumbnail %>

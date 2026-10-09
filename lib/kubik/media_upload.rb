@@ -165,7 +165,9 @@ module Kubik
       end
     end
 
-    after_create :process!
+    # Start derivative jobs only after the row (and Shrine attachment) is committed.
+    # `after_create` can enqueue before promote/store finishes; PDF previews use the same pattern below.
+    after_commit :start_gallery_image_processing!, if: :should_start_gallery_image_processing?
     # Shrine may promote file cache → store in the same transaction as create; plain
     # `on: :create` after_commit often never runs the enqueue. Enqueue on any commit
     # where the PDF is stored and previews are still missing.
@@ -569,15 +571,60 @@ module Kubik
       ProcessPdfPreviewJob.perform_later(self)
     end
 
+    def should_start_gallery_image_processing?
+      return false if pdf_upload?
+      return false unless aasm_state == "uploaded"
+      return false unless gallery_progress_uploaded?
+
+      true
+    end
+
+    def start_gallery_image_processing!
+      process!
+    end
+
+    def gallery_progress_uploaded?
+      (image_data.present? && image_data["id"].present?) ||
+        (file_data.present? && file_data["id"].present?)
+    end
+
+    def gallery_progress_crops_processed?
+      aasm_state == "ready"
+    end
+
+    def gallery_progress_crops_processing?
+      gallery_progress_uploaded? && !gallery_progress_crops_processed?
+    end
+
+    def gallery_progress_alt_text_present?
+      return true unless image_data.present?
+
+      additional_info.to_h.with_indifferent_access[:alt_text].to_s.strip.present?
+    end
+
     def gallery_broadcast_state_changed?
-      saved_change_to_aasm_state? ||
-        saved_change_to_image_data? ||
-        saved_change_to_file_data?
+      return true if saved_change_to_aasm_state? || saved_change_to_image_data? || saved_change_to_file_data?
+      return true if saved_change_to_additional_info? && gallery_relevant_additional_info_changed?
+
+      false
+    end
+
+    def gallery_relevant_additional_info_changed?
+      previous, current = saved_change_to_additional_info
+      gallery_broadcast_additional_info_slice(previous) != gallery_broadcast_additional_info_slice(current)
+    end
+
+    def gallery_broadcast_additional_info_slice(info)
+      data = (info || {}).deep_dup.with_indifferent_access
+      ai = data[:kubik_ai].is_a?(Hash) ? data[:kubik_ai].slice("status", "status_message") : {}
+      data.slice(:alt_text, :img_title, :document_title).merge(kubik_ai: ai)
     end
 
     def broadcast_gallery_live_update!
       KubikMediaLibrary::GalleryBroadcaster.broadcast!(self, event: :update)
     end
+
+    ActiveSupport.run_load_hooks(:kubik_media_upload, self)
 
     private
 
