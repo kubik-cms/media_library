@@ -29,6 +29,12 @@ module KubikMediaLibrary
           end
 
           controller do
+            before_action :enqueue_pdf_preview_if_missing, only: :edit
+
+            def enqueue_pdf_preview_if_missing
+              resource.enqueue_pdf_preview_if_missing!
+            end
+
             def permitted_params
               params.permit(
                 :utf8, :authenticity_token, :commit,

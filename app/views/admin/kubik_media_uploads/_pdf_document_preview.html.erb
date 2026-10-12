@@ -1,20 +1,23 @@
-<div class="media_pdf_preview_container"
-     data-controller="pdf-preview"
-     data-pdf-preview-url-value="<%= public_url %>">
-  <%= image_tag upload.admin_file_thumbnail, class: "media_image", alt: filename %>
-  <p class="media_pdf_preview_actions">
-    <button type="button"
-            class="button"
-            data-pdf-preview-target="reveal"
-            data-action="pdf-preview#reveal">
-      Show full preview
-    </button>
-    <%= link_to "Open PDF in new tab", public_url, target: "_blank", rel: "noopener" %>
+<% preview_url = kubik_media_absolute_url(public_url) %>
+<div class="kubik-media-upload-pdf-preview">
+  <% if upload.file_preview_available? %>
+    <div class="kubik-preview-captures__viewport">
+      <%= image_tag upload.admin_file_thumbnail, class: "kubik-preview-captures__image", alt: filename %>
+    </div>
+  <% else %>
+    <div class="kubik-preview-captures__viewport kubik-preview-captures__viewport--loading">
+      <div class="kubik-preview-captures__loading-state">
+        <span class="kubik-preview-captures__spinner" aria-hidden="true"></span>
+        <p class="kubik-preview-captures__loading-text">Generating preview…</p>
+      </div>
+    </div>
+  <% end %>
+  <p class="kubik-preview-captures__toolbar">
+    <%= link_to "Preview in new window",
+                preview_url,
+                target: "_blank",
+                rel: "noopener",
+                class: "kubik-preview-captures__preview-link",
+                data: { turbo: false } %>
   </p>
-  <div class="media_pdf_preview_panel" data-pdf-preview-target="panel" hidden>
-    <iframe data-pdf-preview-target="frame"
-            class="media_pdf_preview"
-            title="<%= filename %>"
-            loading="lazy"></iframe>
-  </div>
 </div>

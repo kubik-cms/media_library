@@ -37,6 +37,14 @@ module KubikMediaLibrary
       end.join(', ')
     end
 
+    def kubik_media_admin_fieldset_header_partial
+      if lookup_context.template_exists?("active_admin/kubik/fieldset_header", [], true)
+        "active_admin/kubik/fieldset_header"
+      else
+        "admin/shared/fieldset_header"
+      end
+    end
+
     def kubik_media_absolute_url(url, host: nil)
       base = host
       if base.blank? && respond_to?(:request) && request.present?

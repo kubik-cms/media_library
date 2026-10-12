@@ -168,10 +168,6 @@ module Kubik
     # Start derivative jobs only after the row (and Shrine attachment) is committed.
     # `after_create` can enqueue before promote/store finishes; PDF previews use the same pattern below.
     after_commit :start_gallery_image_processing!, if: :should_start_gallery_image_processing?
-    # Shrine may promote file cache → store in the same transaction as create; plain
-    # `on: :create` after_commit often never runs the enqueue. Enqueue on any commit
-    # where the PDF is stored and previews are still missing.
-    after_commit :enqueue_pdf_preview, if: :should_enqueue_pdf_preview_job?
     after_commit :broadcast_gallery_live_update!, on: :update, if: :gallery_broadcast_state_changed?
 
     if defined?(ActsAsTaggableOn)
@@ -562,12 +558,21 @@ module Kubik
     def should_enqueue_pdf_preview_job?
       return false unless pdf_upload? && !file_preview_available?
       return false unless file&.storage_key == :store
-      return false unless previous_changes.key?("file_data")
+      return false unless saved_change_to_file_data?
 
       true
     end
 
     def enqueue_pdf_preview
+      return unless should_enqueue_pdf_preview_job?
+
+      ProcessPdfPreviewJob.perform_later(self)
+    end
+
+    def enqueue_pdf_preview_if_missing!
+      return unless pdf_upload? && !file_preview_available?
+      return unless file&.storage_key == :store
+
       ProcessPdfPreviewJob.perform_later(self)
     end
 
@@ -625,6 +630,10 @@ module Kubik
     end
 
     ActiveSupport.run_load_hooks(:kubik_media_upload, self)
+
+    # Register after Shrine / extension hooks so `saved_change_to_file_data?` is still set when
+    # cache → store promotion commits (see Shrine activerecord after_commit ordering).
+    after_commit { enqueue_pdf_preview }
 
     private
 
