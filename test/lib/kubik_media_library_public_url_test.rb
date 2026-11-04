@@ -16,6 +16,16 @@ class KubikMediaLibraryPublicUrlTest < ActiveSupport::TestCase
     assert_equal "http://cln.localhost:3000/uploads/store/photo.jpg", result
   end
 
+  test "request_origin includes port for rs.localhost when SERVER_PORT is non-standard" do
+    request = ActionDispatch::TestRequest.create(
+      "HTTP_HOST" => "rs.localhost",
+      "SERVER_PORT" => "3000",
+      "rack.url_scheme" => "http"
+    )
+
+    assert_equal "http://rs.localhost:3000", KubikMediaLibrary::PublicUrl.request_origin(request)
+  end
+
   test "default_host uses route default url options" do
     previous = Rails.application.routes.default_url_options.dup
     Rails.application.routes.default_url_options.merge!(

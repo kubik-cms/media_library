@@ -48,7 +48,7 @@ module KubikMediaLibrary
     def kubik_media_absolute_url(url, host: nil)
       base = host
       if base.blank? && respond_to?(:request) && request.present?
-        base = request.base_url
+        base = KubikMediaLibrary::PublicUrl.request_origin(request)
       end
 
       KubikMediaLibrary::PublicUrl.absolute(url, host: base)

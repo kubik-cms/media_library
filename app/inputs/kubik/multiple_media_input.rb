@@ -1,6 +1,7 @@
 module Kubik
   class MultipleMediaInput
     include Formtastic::Inputs::Base
+    include MediaPickerModalUrl
 
     def wrapper_html_options
       super.merge(
@@ -97,7 +98,7 @@ module Kubik
     def empty_template_html
       template.content_tag(:template, 'data-multiple_image_selector-target': 'emptyTemplate') do
         template.content_tag(:div,
-                             'src': Rails.application.routes.url_helpers.admin_kubik_media_uploads_path(modal: true),
+                             'src': image_picker_modal_src,
                              'data-kubik-modal-header-text': modal_header,
                              'data-kubik-modal-action': 'return',
                              'data-kubik-modal-return-controller': "multiple_image_selector##{wrapper_html_options[:id]}",
@@ -134,7 +135,7 @@ module Kubik
 
     def swap_action
       template.content_tag(:div,
-                           'src': Rails.application.routes.url_helpers.admin_kubik_media_uploads_path(modal: true),
+                           'src': image_picker_modal_src,
                            'data-kubik-modal-header-text': modal_header,
                            'data-kubik-modal-action': 'return',
                            'data-kubik-modal-return-controller': "multiple_image_selector##{wrapper_html_options[:id]}",

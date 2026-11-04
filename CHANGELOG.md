@@ -1,5 +1,20 @@
 ## [Unreleased]
 
+## [0.2.13] - 2026-11-04
+
+### Added
+
+- `Kubik::MediaPickerModalUrl` for shared image/file picker modal URLs (optional `media_type` query param).
+
+### Changed
+
+- `KubikMediaLibrary::PublicUrl` resolves more host-app asset and Shrine URL shapes; expanded tests.
+- Single/multiple media Formtastic inputs use the shared picker URL helper.
+
+### Package
+
+- `@kubik-cms/media_library` **0.1.12** — rebuild `package/` after pull.
+
 ## [0.2.12] - 2026-10-10
 
 ### Fixed
