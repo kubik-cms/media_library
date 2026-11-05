@@ -1,5 +1,9 @@
 ## [Unreleased]
 
+### Package
+
+- `@kubik-cms/media_library` **0.1.13** — version bump; rebuild `package/` when JS changes land.
+
 ## [0.2.13] - 2026-11-04
 
 ### Added
